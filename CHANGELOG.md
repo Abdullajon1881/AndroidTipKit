@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Real README screenshot gallery: light + dark captures from the sample app on a device (`docs/images/`), replacing the placeholder scaffold.
+- Sample app now follows the system light/dark theme (`MaterialTheme` uses `lightColorScheme()` / `darkColorScheme()` via `isSystemInDarkTheme()`), and demonstrates a `TipPosition.Top` anchored `TipBox` in addition to the existing Bottom one.
+
 ## [0.3.0-alpha.1] - 2026-05-29
 
 Hardening, testing, and polish on top of the 0.2.0-alpha.1 foundation. Focus: no avoidable crashes for consuming apps, real test coverage for the managed UI, and Maven Central readiness. Public API changes are additive (no breaking changes). **Still not published to Maven Central** — that remains gated on maintainer accounts/keys.

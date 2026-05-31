@@ -3,6 +3,7 @@ package dev.nudgekit.sample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,18 +18,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.nudgekit.compose.ManagedInlineTip
 import dev.nudgekit.compose.ManagedTipBox
+import dev.nudgekit.compose.TipBox
 import dev.nudgekit.compose.TipPosition
 import dev.nudgekit.core.Tip
 import dev.nudgekit.core.TipAnalytics
@@ -45,7 +52,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
+            val colorScheme = if (isSystemInDarkTheme()) darkColorScheme() else lightColorScheme()
+            MaterialTheme(colorScheme = colorScheme) {
                 NudgeKitSampleApp(manager)
             }
         }
@@ -81,6 +89,13 @@ private val notificationTip = Tip(
         TipRule.NotDismissed,
         TipRule.MaxDisplayCount(3),
     ),
+)
+
+private val searchTip = Tip(
+    id = "search_hint",
+    title = "Search faster",
+    message = "Tip can sit above its anchor too — pull down anywhere to search.",
+    actionLabel = "Show me",
 )
 
 // ─── Sample analytics ───────────────────────────────────────────────
@@ -161,6 +176,32 @@ private fun NudgeKitSampleApp(manager: DataStoreTipManager) {
                     modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("Notification Settings")
+                }
+            }
+
+            HorizontalDivider()
+
+            // ── Section 2b: Anchored tip (Top) ─────────────────────
+            SectionHeader("Anchored Tip — Top")
+            Text(
+                text = "A pure TipBox anchored above its content (TipPosition.Top).",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            var searchTipVisible by remember { mutableStateOf(true) }
+            TipBox(
+                tip = searchTip,
+                visible = searchTipVisible,
+                position = TipPosition.Top,
+                modifier = Modifier.fillMaxWidth(),
+                onDismiss = { searchTipVisible = false },
+                onActionClick = { /* open search */ },
+            ) {
+                Button(
+                    onClick = { searchTipVisible = true },
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text("Search")
                 }
             }
 

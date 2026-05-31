@@ -18,15 +18,12 @@ Status:
 
 ## Screenshots
 
-> Captured from the bundled [`sample`](sample/) app. **Images are placeholders
-> until added** — see [docs/images/README.md](docs/images/README.md) for capture
-> guidance.
+Real captures from the bundled [`sample`](sample/) app on an Android device.
 
 | | Light | Dark |
 |---|---|---|
-| **InlineTip** | ![InlineTip card in light mode](docs/images/inline-tip-light.png) | ![InlineTip card in dark mode](docs/images/inline-tip-dark.png) |
-| **TipBox** | ![TipBox anchored below content, light mode](docs/images/tipbox-bottom-light.png) | ![TipBox anchored above content, dark mode](docs/images/tipbox-top-dark.png) |
-| **Managed tip flow** | ![Event-driven managed tip appearing, light mode](docs/images/managed-tip-flow-light.png) | |
+| **Overview** (inline tip + anchored tip) | ![NudgeKit sample in light mode: an inline "Use Filters" tip above an anchored notification tip](docs/images/inline-tip-light.png) | ![NudgeKit sample in dark mode: an inline "Use Filters" tip above an anchored notification tip](docs/images/inline-tip-dark.png) |
+| **Anchored TipBox** | ![A TipBox anchored below its button (TipPosition.Bottom), light mode](docs/images/tipbox-bottom-light.png) | ![A TipBox anchored above its button (TipPosition.Top), dark mode](docs/images/tipbox-top-dark.png) |
 
 ## Why NudgeKit
 

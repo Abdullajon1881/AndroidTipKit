@@ -1,28 +1,32 @@
 # Screenshots
 
-This folder holds the screenshots referenced by the project [README](../../README.md)
-"Screenshots" section. The images are **not committed yet** — this guide
-describes what to capture and how, so the gallery renders once the PNGs are
-added.
+This folder holds the screenshots shown in the project [README](../../README.md)
+"Screenshots" section. They are real captures from the bundled
+[`sample`](../../sample/) app on an Android device.
 
-All screenshots come from the bundled [`sample`](../../sample/) app:
+## Files
+
+| File | Component | Mode | Shows |
+|------|-----------|------|-------|
+| `inline-tip-light.png` | Overview | Light | The inline "Use Filters" tip above the anchored notification tip. |
+| `inline-tip-dark.png` | Overview | Dark | The same screen in dark mode. |
+| `tipbox-bottom-light.png` | `TipBox` (`TipPosition.Bottom`) | Light | A tip anchored **below** its button. |
+| `tipbox-top-dark.png` | `TipBox` (`TipPosition.Top`) | Dark | A tip anchored **above** its button. |
+
+Keep these exact filenames — the README references them directly.
+
+> An event-driven / managed-flow screenshot (e.g. the "Save Your Address" tip
+> appearing after two checkout visits) is a nice future addition — it just
+> needs a device where adb can drive taps/scroll to reach that state.
+
+## Re-capturing
+
+The shots above were produced from the `sample` app. To refresh them:
 
 ```bash
 ./gradlew :sample:assembleDebug
 # install on an emulator/device and run, or launch from Android Studio
 ```
-
-## Expected files
-
-| File | Component | Mode | What it should show |
-|------|-----------|------|---------------------|
-| `inline-tip-light.png` | `InlineTip` | Light | An inline tip card with title, message, and an action button. |
-| `inline-tip-dark.png` | `InlineTip` | Dark | The same inline tip in dark mode. |
-| `tipbox-bottom-light.png` | `TipBox` (`TipPosition.Bottom`) | Light | A tip anchored **below** a button/content. |
-| `tipbox-top-dark.png` | `TipBox` (`TipPosition.Top`) | Dark | A tip anchored **above** a button/content. |
-| `managed-tip-flow-light.png` | `ManagedInlineTip` | Light | A managed, event-driven tip appearing after the rule is satisfied (e.g. the "Save Your Address" tip after visiting checkout twice). |
-
-Keep these exact filenames — the README references them directly.
 
 ## Capture guidance
 
