@@ -158,7 +158,22 @@ interface TipManager {
 }
 ```
 
-A concrete implementation lives in [`nudgekit-datastore`](datastore.md). The interface itself stays Android-free.
+The production, persistent implementation lives in [`nudgekit-datastore`](datastore.md). The interface itself stays Android-free.
+
+## `MemoryTipManager`
+
+An in-memory `TipManager` that lives in `nudgekit-core` — no Android, no DataStore, nothing persisted. State is held in plain maps for the lifetime of the instance.
+
+```kotlin
+val manager = MemoryTipManager()                     // optional: MemoryTipManager(clock = { fakeNow })
+
+manager.trackScreen("checkout")
+manager.markShown("save_address")
+val state = manager.getTipState("save_address")      // synchronous read
+val show = manager.shouldShow(saveAddressTip)         // suspend (runs the evaluator)
+```
+
+Use it for **unit tests, Compose previews, and sample/debug flows**. Its behaviour mirrors `DataStoreTipManager` (same increments, same validation, `reset` clears one tip but not counters, `resetAll` clears everything) and it takes the same injectable `clock`. The read helpers `getTipState` / `getCounters` are **plain (non-suspending)** functions here, since in-memory reads are synchronous; `evaluate` / `shouldShow` stay `suspend` because the evaluator runs `TipRule.Custom` predicates. It's thread-safe via a single internal monitor.
 
 ## `TipAnalytics`
 

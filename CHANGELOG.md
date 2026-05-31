@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `MemoryTipManager` — an in-memory `TipManager` in `nudgekit-core` (no Android, no DataStore, nothing persisted) for tests, Compose previews, and sample/debug flows. Mirrors `DataStoreTipManager`'s behaviour and validation, takes the same injectable `clock`, exposes synchronous `getTipState` / `getCounters` and suspend `evaluate` / `shouldShow`, and is thread-safe via a single monitor. 21 unit tests.
 - Real README screenshot gallery: light + dark captures from the sample app on a device (`docs/images/`), replacing the placeholder scaffold.
 - Sample app now follows the system light/dark theme (`MaterialTheme` uses `lightColorScheme()` / `darkColorScheme()` via `isSystemInDarkTheme()`), and demonstrates a `TipPosition.Top` anchored `TipBox` in addition to the existing Bottom one.
 - API-stability documentation in `docs/limitations.md` (which types are stable vs. likely to change before 1.0).

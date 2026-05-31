@@ -40,7 +40,7 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 ## v0.4 — KMP and broader reach
 
 - [ ] Migrate `nudgekit-core` to a Kotlin Multiplatform module (`commonMain`) so the rule engine is reusable on iOS, desktop, and JVM backends.
-- [ ] Keep `nudgekit-datastore` Android-only; provide a `MemoryTipManager` in core for testing and KMP use.
+- [x] Provide a `MemoryTipManager` in `nudgekit-core` for testing / previews / KMP-friendly use (keep `nudgekit-datastore` Android-only).
 - [ ] iOS UI components (SwiftUI + a Compose Multiplatform variant) — exploratory.
 
 ## v0.5+ — Tooling and ecosystem

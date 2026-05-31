@@ -186,6 +186,7 @@ scope.launch {
 - `TipCounters`: app-wide event counts and screen visit counts
 - `TipManager`: write-side lifecycle interface
 - `DataStoreTipManager`: Android DataStore implementation plus evaluation helpers
+- `MemoryTipManager`: in-memory `TipManager` in `nudgekit-core` for tests, previews, and sample/debug flows (no Android, nothing persisted)
 - Managed UI: `ManagedInlineTip` and `ManagedTipBox`
 - `TipAnalytics`: SDK-agnostic hook for observing tip lifecycle events (`onTipShown`, `onTipDismissed`, `onTipActionClicked`)
 
