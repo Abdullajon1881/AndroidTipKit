@@ -321,22 +321,25 @@ If you only need a tooltip, use a tooltip. If you need "show the right nudge at 
 
 ## Current Limitations
 
-- Compose UI tests cover the pure-UI components (`InlineTip`, `TipBox`); managed components are not yet covered by automated tests
-- `TipBox` positioning is intentionally simple, not pixel-perfect
-- managed components (`ManagedInlineTip`, `ManagedTipBox`) live in `nudgekit-compose-datastore`; `nudgekit-compose` itself is now pure UI with no DataStore dependency
-- managed components observe all counters through `observeCounters()`
-- managed components use `collectAsState`, not `collectAsStateWithLifecycle`
-- production apps should use one shared `DataStoreTipManager` instance
-- publishing is not configured yet
+- **Alpha API** — the public surface may change before `1.0.0` (see [API stability](docs/limitations.md#api-stability)).
+- Not published to Maven Central yet — a local publishing dry-run (sources + Dokka javadoc + gated signing) is configured; use the modules locally for now.
+- managed components (`ManagedInlineTip`, `ManagedTipBox`) live in `nudgekit-compose-datastore`; `nudgekit-compose` is pure UI with no DataStore dependency.
+- managed components observe all counters through `observeCounters()` (intentional — `TipRule.Custom` can read any counter).
+- `TipBox` is in-flow, not a floating overlay/popover.
+- production apps should reuse the process-wide `DataStoreTipManager` from `create()`.
+
+## Accessibility
+
+The tip components ship with sensible accessibility defaults: the dismiss button keeps the Material 48 dp touch target with a `"Dismiss tip"` content description, the tip title is exposed as a heading for screen-reader navigation, text scales with the user's font-size setting, and the action button uses standard `TextButton` semantics. See [docs/compose-ui.md#accessibility](docs/compose-ui.md#accessibility).
 
 ## Roadmap
 
 Near-term priorities:
 
-- add Compose UI tests for the managed components (`ManagedInlineTip`, `ManagedTipBox`) in `nudgekit-compose-datastore`
-- improve `TipBox` positioning and anchoring
-- tighten managed observation granularity
-- prepare publishing and release packaging
+- deeper accessibility audit (TalkBack focus order, dynamic-type stress, measured contrast)
+- tip groups / mutual exclusion (make `Tip.priority` meaningful)
+- improve `TipBox` anchoring toward a true popover
+- prepare Maven Central publishing (real GPG key + Sonatype account)
 
 ## Documentation
 

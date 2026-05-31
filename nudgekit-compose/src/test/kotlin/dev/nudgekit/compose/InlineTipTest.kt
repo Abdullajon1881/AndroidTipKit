@@ -1,6 +1,10 @@
 package dev.nudgekit.compose
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -131,5 +135,29 @@ class InlineTipTest {
         composeRule.onNodeWithText("Do it").performClick()
 
         assertThat(clicked).isTrue()
+    }
+
+    // ── Accessibility ──────────────────────────────────────────────
+
+    @Test
+    fun `dismiss control has a clickable action for accessibility services`() {
+        composeRule.setContent {
+            InlineTip(tip = basicTip, onDismiss = {})
+        }
+
+        // The "Dismiss tip" node is reachable and exposes a click action to
+        // accessibility services / test frameworks.
+        composeRule.onNodeWithContentDescription("Dismiss tip")
+            .assertHasClickAction()
+    }
+
+    @Test
+    fun `title is exposed as a heading for screen readers`() {
+        composeRule.setContent {
+            InlineTip(tip = basicTip)
+        }
+
+        composeRule.onNodeWithText("Basic title")
+            .assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
     }
 }

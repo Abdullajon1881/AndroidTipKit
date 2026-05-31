@@ -43,7 +43,9 @@ object NudgeTipDefaults {
         titleColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
         messageColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
         actionColor: Color = MaterialTheme.colorScheme.primary,
-        dismissColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f),
+        // 0.74 (raised from 0.6) keeps the dismiss icon discreet while meeting a
+        // readable non-text contrast in both light and dark themes.
+        dismissColor: Color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.74f),
     ): NudgeTipColors = NudgeTipColors(
         containerColor = containerColor,
         titleColor = titleColor,

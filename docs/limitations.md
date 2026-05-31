@@ -29,7 +29,7 @@ Test counts:
 - **Broad counter observation.** `ManagedInlineTip` and `ManagedTipBox` subscribe to `observeCounters()` and re-evaluate whenever *any* counter changes — not only the ones referenced by the tip's rules. Fine for typical apps; suboptimal at scale.
 - **Sticky-show (a deliberate design choice, not a bug).** Managed components treat "currently showing" as sticky local state: once a tip is on screen it stays for that appearance and is only re-evaluated when hidden or dismissed. This stops a tip from flickering away mid-view if `markShown` mutates state that a rule depends on. A `MaxDisplayCount(n)` tip therefore shows **exactly `n` times**, and the persisted `displayCount` reaches exactly `n` (the evaluator hides at `displayCount >= n`).
 - **`TipBox` Start/End** lay the tip beside the anchor in a `Row`. The tip takes up to half the width, capped at 240 dp, and respects layout direction (RTL). It is in-flow, not a floating popover (overlay-style anchoring with an arrow is on the roadmap).
-- **Dismiss button touch target.** The dismiss `IconButton` is 40 dp, slightly below the Material 48 dp recommendation, chosen to fit small cards. We will revisit this once we have accessibility-focused UI tests.
+- **Accessibility.** The dismiss button meets the 48 dp touch-target minimum and has a content description; the tip title is a heading; text scales with the font-size setting. A deeper audit (TalkBack focus order, dynamic-type stress, full contrast measurement) is still future work.
 
 ## DataStore
 
@@ -38,17 +38,24 @@ Test counts:
 - **No TTL / auto-expiry.** Persisted state lives until the user uninstalls or you call `reset` / `resetAll`. An `ExpiresAfter` rule could be added later.
 - **DataStore singleton.** Creating two `DataStoreTipManager` instances pointing at the same file is officially undefined behavior. The sample uses an Activity-scoped instance for simplicity, but production apps should use one process-wide instance.
 
+## API stability
+
+NudgeKit is **alpha**: the entire public API may change before `1.0.0`, and there are no backward-compatibility guarantees between alpha versions yet.
+
+- **Stable in shape (low churn expected):** `Tip`, `TipState`, `TipCounters`, `TipDecision` / `TipHideReason`, `TipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`). These are the core value types and contracts; changes here would be additive where possible.
+- **Most likely to evolve:** `TipRule` (new rule types / a possible OR combinator), `Tip.priority` semantics (see below), `DataStoreTipManager`'s read/observe surface, and `NudgeTipDefaults` styling values.
+- Every change that affects users is recorded in [CHANGELOG.md](../CHANGELOG.md), with a migration note when it is breaking.
+
 ## Core API
 
 - **`priority` field is informational.** `Tip.priority` exists for future tip-group / mutual-exclusion features but is not used by the current evaluator.
 - **No OR combinator.** Rules are AND-ed together. For OR semantics, use `TipRule.Custom { … || … }`.
 - **`TipRule.Custom` predicate equality is undefined.** It is intentionally not a `data class`. Comparing two `Custom` rules with `==` is meaningless.
-- **No analytics hook.** There is no `TipAnalytics` interface yet. Wrap `markShown` / `dismiss` calls in your own code if you want to log events.
+- **Analytics is opt-in.** `TipAnalytics` (+ `NoOpTipAnalytics`) lives in `nudgekit-core`; managed components take an optional `analytics` parameter. Pure-UI components don't — bridge their callbacks yourself.
 
 ## Build / tooling
 
 - **JDK 17 required.** The toolchain pins JDK 17 explicitly. JDK 21+ is not yet validated.
-- **No CI.** This repo does not yet have a CI configuration. `./gradlew build` is the recommended local gate.
-- **No publishing config.** Adding `maven-publish` and signing is part of the pre-release work.
+- **Publishing is a local dry-run only.** `maven-publish` + gated signing are configured (`publishToMavenLocal` works); nothing is uploaded to Maven Central yet.
 
 See [roadmap.md](roadmap.md) for what we plan to address and in roughly what order.

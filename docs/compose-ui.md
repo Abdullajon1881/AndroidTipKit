@@ -269,12 +269,12 @@ Open them in Android Studio's preview pane to iterate on styling.
 
 ## Accessibility
 
-- The dismiss `IconButton` has `contentDescription = "Dismiss tip"` for screen readers.
-- The action button uses standard `TextButton` semantics.
-- Touch target on the dismiss button is 40 dp (slightly below the Material 48 dp recommendation to suit small cards; see [limitations.md](limitations.md)).
+- The dismiss `IconButton` has `contentDescription = "Dismiss tip"` for screen readers and keeps the Material **48 dp** minimum touch target (the glyph stays a compact 20 dp).
+- The tip **title** is exposed as a heading (`semantics { heading() }`), so screen-reader users can jump between tips by heading.
+- The action button uses standard `TextButton` semantics (a 48 dp-tall, labelled button).
+- Text uses theme typography in `sp`, so it scales with the user's font-size setting; the card grows vertically rather than truncating.
+- Default colors come from the Material theme; the dismiss icon tint was raised to ~0.74 alpha for readable non-text contrast in both light and dark.
 
 ## What's missing
 
-- **Pure-UI Compose tests exist; managed-component tests are still deferred.** `InlineTip` and `TipBox` have Robolectric tests in `nudgekit-compose`; `ManagedInlineTip` / `ManagedTipBox` are still covered only by previews and the sample app — see [limitations.md](limitations.md).
-- **`collectAsState` not `collectAsStateWithLifecycle`** — see [limitations.md](limitations.md).
-- **`Start`/`End` positions** use a fixed `widthIn(max = 240.dp)`. Real popover positioning will come later.
+- **`Start`/`End` positions** use a responsive `fillMaxWidth(0.5f).widthIn(max = 240.dp)`. A true floating popover (overlay + arrow) will come later.

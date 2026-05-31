@@ -20,6 +20,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import dev.nudgekit.core.Tip
 
@@ -66,6 +68,9 @@ fun InlineTip(
                         text = tip.title,
                         style = MaterialTheme.typography.titleSmall,
                         color = colors.titleColor,
+                        // Expose the title as a heading so screen-reader users can
+                        // navigate between tips by heading.
+                        modifier = Modifier.semantics { heading() },
                     )
                     Text(
                         text = tip.message,
@@ -76,15 +81,15 @@ fun InlineTip(
                 }
 
                 if (onDismiss != null) {
-                    IconButton(
-                        onClick = onDismiss,
-                        modifier = Modifier.size(40.dp),
-                    ) {
+                    // No explicit size: IconButton keeps its default 48.dp touch
+                    // target (Material accessibility minimum), while the icon glyph
+                    // stays visually small.
+                    IconButton(onClick = onDismiss) {
                         Icon(
                             imageVector = Icons.Default.Close,
                             contentDescription = "Dismiss tip",
                             tint = colors.dismissColor,
-                            modifier = Modifier.size(18.dp),
+                            modifier = Modifier.size(20.dp),
                         )
                     }
                 }

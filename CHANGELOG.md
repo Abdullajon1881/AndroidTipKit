@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Real README screenshot gallery: light + dark captures from the sample app on a device (`docs/images/`), replacing the placeholder scaffold.
 - Sample app now follows the system light/dark theme (`MaterialTheme` uses `lightColorScheme()` / `darkColorScheme()` via `isSystemInDarkTheme()`), and demonstrates a `TipPosition.Top` anchored `TipBox` in addition to the existing Bottom one.
+- API-stability documentation in `docs/limitations.md` (which types are stable vs. likely to change before 1.0).
+- Accessibility tests for `InlineTip`: the dismiss control exposes a click action, and the title is exposed as a heading.
+
+### Changed
+- **Accessibility:** `InlineTip`'s dismiss button now keeps the Material **48 dp** minimum touch target (was an explicit 40 dp) while the close glyph stays compact (20 dp). The tip **title** is exposed as a heading (`semantics { heading() }`). The default dismiss-icon tint contrast was raised (alpha 0.6 → 0.74) for readability in both themes. These are additive — no public API changed.
+
+### Notes
+- No public API changes in this set — additive accessibility/semantics improvements, default-value tweaks, tests, and docs only.
 
 ## [0.3.0-alpha.1] - 2026-05-29
 

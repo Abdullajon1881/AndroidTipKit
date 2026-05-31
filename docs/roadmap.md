@@ -24,7 +24,8 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 - [x] Responsive `TipBox` Start/End positioning (RTL-aware).
 - [x] Real Dokka API docs in the published Javadoc JARs.
 - [x] 139 passing tests across `nudgekit-core` (78), `nudgekit-datastore` (44), `nudgekit-compose` (11), and `nudgekit-compose-datastore` (6).
-- [ ] Accessibility audit of all UI components (touch targets, content descriptions, dynamic type, dark mode contrast).
+- [x] Accessibility pass on the tip components: 48 dp dismiss touch target, title heading semantics, font-scale-friendly text, improved dismiss-icon contrast. (A deeper audit — TalkBack focus order, dynamic-type stress, measured contrast — remains for B.2.)
+- [x] API-stability documentation (stable vs. likely-to-change surface) in `docs/limitations.md`.
 - [ ] Maven Central publishing (real GPG key, Sonatype account, upload). Dry-run + signing scaffolding already in place.
 
 ## v0.3 — UX and ergonomics
