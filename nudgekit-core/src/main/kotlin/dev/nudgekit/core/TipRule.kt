@@ -68,6 +68,33 @@ sealed interface TipRule {
     }
 
     /**
+     * Composite **OR** rule: passes when **any** of [rules] passes. Use it to
+     * combine alternatives, e.g. `AnyOf(listOf(AfterEvent("a", 3), AfterScreenVisits("home", 5)))`.
+     *
+     * Rules are tried in order; the first passing sub-rule short-circuits.
+     * If all sub-rules fail, the tip is hidden with [TipHideReason.NoneMatched],
+     * which carries each branch's reason. Nesting is supported (e.g. an [AnyOf]
+     * of [AllOf]s).
+     */
+    data class AnyOf(val rules: List<TipRule>) : TipRule {
+        init {
+            require(rules.isNotEmpty()) { "AnyOf rules must not be empty" }
+        }
+    }
+
+    /**
+     * Composite **AND** rule: passes only when **all** of [rules] pass. Rules
+     * are AND-ed at the top level already, so this is mainly useful nested
+     * inside an [AnyOf]. The first failing sub-rule short-circuits and its
+     * [TipHideReason] is reported.
+     */
+    data class AllOf(val rules: List<TipRule>) : TipRule {
+        init {
+            require(rules.isNotEmpty()) { "AllOf rules must not be empty" }
+        }
+    }
+
+    /**
      * Passes when [predicate] returns `true`.
      *
      * Use this for app-specific eligibility logic that doesn't fit the built-in rules.

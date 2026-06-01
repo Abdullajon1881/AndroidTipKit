@@ -57,4 +57,10 @@ sealed interface TipHideReason {
 
     /** A [TipRule.Custom] predicate returned `false`. */
     data object CustomRuleFailed : TipHideReason
+
+    /**
+     * Every branch of a [TipRule.AnyOf] failed. [reasons] holds the
+     * [TipHideReason] from each branch, in declaration order, for debugging.
+     */
+    data class NoneMatched(val reasons: List<TipHideReason>) : TipHideReason
 }

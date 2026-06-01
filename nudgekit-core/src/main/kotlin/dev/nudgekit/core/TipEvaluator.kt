@@ -154,6 +154,33 @@ class TipEvaluator {
                 }
             }
 
+            is TipRule.AnyOf -> {
+                val reasons = ArrayList<TipHideReason>(rule.rules.size)
+                var passed = false
+                for (sub in rule.rules) {
+                    val reason = evaluateRule(sub, context)
+                    if (reason == null) {
+                        passed = true
+                        break // first passing branch short-circuits
+                    }
+                    reasons.add(reason)
+                }
+                if (passed) null else TipHideReason.NoneMatched(reasons)
+            }
+
+            is TipRule.AllOf -> {
+                // First failing sub-rule short-circuits and reports its reason.
+                var failure: TipHideReason? = null
+                for (sub in rule.rules) {
+                    val reason = evaluateRule(sub, context)
+                    if (reason != null) {
+                        failure = reason
+                        break
+                    }
+                }
+                failure
+            }
+
             is TipRule.Custom -> {
                 if (!rule.predicate(context)) TipHideReason.CustomRuleFailed else null
             }
