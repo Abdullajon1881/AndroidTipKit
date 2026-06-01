@@ -43,3 +43,22 @@ interface ReactiveTipManager : TipManager {
      */
     suspend fun shouldShow(tip: Tip): Boolean
 }
+
+/**
+ * Selects the single tip to show from [candidates] (mutual exclusion), using
+ * this manager's persisted state and clock via [shouldShow].
+ *
+ * Candidates are considered in a deterministic order — **[Tip.priority]
+ * descending, then [Tip.id] ascending** — and the first eligible one is
+ * returned, or `null` if none are eligible. Pass a pre-filtered group, e.g.
+ * `manager.selectEligible(tips.filter { it.groupId == "onboarding" })`.
+ *
+ * For the full per-candidate breakdown (each tip's [TipHideReason]), use
+ * [TipEvaluator.select] instead.
+ */
+suspend fun ReactiveTipManager.selectEligible(candidates: List<Tip>): Tip? {
+    val ordered = candidates.sortedWith(
+        compareByDescending<Tip> { it.priority }.thenBy { it.id },
+    )
+    return ordered.firstOrNull { shouldShow(it) }
+}

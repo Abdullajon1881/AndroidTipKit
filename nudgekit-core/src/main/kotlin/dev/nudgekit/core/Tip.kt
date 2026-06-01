@@ -10,6 +10,12 @@ package dev.nudgekit.core
  * for this tip's state (dismissed flag, display count, last-shown time). Two
  * tips sharing an [id] would share — and corrupt — each other's state, and
  * changing an [id] later resets that tip's history.
+ *
+ * [priority] and [groupId] drive **mutual exclusion**: when several tips belong
+ * to the same [groupId], a selector (see `TipEvaluator.select` /
+ * `ReactiveTipManager.selectEligible`) can pick the single highest-[priority]
+ * eligible tip to show. Higher [priority] wins; ties break by [id]. Tips with a
+ * `null` [groupId] are ungrouped and are never excluded by another tip.
  */
 data class Tip(
     val id: String,
@@ -18,10 +24,14 @@ data class Tip(
     val actionLabel: String? = null,
     val priority: Int = 0,
     val rules: List<TipRule> = listOf(TipRule.NotDismissed),
+    val groupId: String? = null,
 ) {
     init {
         require(id.isNotBlank()) { "Tip id must not be blank" }
         require(title.isNotBlank()) { "Tip title must not be blank" }
         require(message.isNotBlank()) { "Tip message must not be blank" }
+        require(groupId == null || groupId.isNotBlank()) {
+            "Tip groupId must be null or non-blank"
+        }
     }
 }

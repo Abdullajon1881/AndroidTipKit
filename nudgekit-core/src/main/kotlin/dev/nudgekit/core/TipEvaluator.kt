@@ -48,6 +48,47 @@ class TipEvaluator {
         nowMillis: Long = System.currentTimeMillis(),
     ): Boolean = evaluate(tip, state, counters, nowMillis) is TipDecision.Show
 
+    /**
+     * Selects the single tip to show from [candidates], for mutual-exclusion
+     * ("only one tip from this group at a time").
+     *
+     * Candidates are evaluated in a deterministic order — **[Tip.priority]
+     * descending, then [Tip.id] ascending** — and the first eligible one
+     * (`TipDecision.Show`) becomes [TipSelection.selected]. If none are
+     * eligible, `selected` is `null`. Every candidate's [TipDecision] is
+     * recorded in [TipSelection.decisions] in that same order.
+     *
+     * This method does not interpret [Tip.groupId]; pass a pre-filtered group
+     * (e.g. `tips.filter { it.groupId == "onboarding" }`). [stateFor] supplies
+     * the persisted [TipState] for each candidate.
+     *
+     * @param candidates The tips to choose between (typically one group).
+     * @param stateFor   Resolves the persisted [TipState] for a given tip.
+     * @param counters   Global event and screen-visit counters.
+     * @param nowMillis  Current wall-clock time; pass an explicit value in tests.
+     */
+    suspend fun select(
+        candidates: List<Tip>,
+        stateFor: (Tip) -> TipState,
+        counters: TipCounters,
+        nowMillis: Long = System.currentTimeMillis(),
+    ): TipSelection {
+        val ordered = candidates.sortedWith(
+            compareByDescending<Tip> { it.priority }.thenBy { it.id },
+        )
+
+        var selected: Tip? = null
+        val decisions = ArrayList<TipSelection.Decision>(ordered.size)
+        for (tip in ordered) {
+            val decision = evaluate(tip, stateFor(tip), counters, nowMillis)
+            decisions.add(TipSelection.Decision(tip, decision))
+            if (selected == null && decision is TipDecision.Show) {
+                selected = tip
+            }
+        }
+        return TipSelection(selected, decisions)
+    }
+
     private suspend fun evaluateRule(rule: TipRule, context: TipContext): TipHideReason? {
         return when (rule) {
             is TipRule.NotDismissed -> {
