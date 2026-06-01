@@ -91,7 +91,13 @@ class DataStoreTipManager(
         dataStore.edit { prefs ->
             val countKey = displayCountKey(tipId)
             prefs[countKey] = (prefs[countKey] ?: 0) + 1
-            prefs[lastShownKey(tipId)] = clock()
+            val now = clock()
+            prefs[lastShownKey(tipId)] = now
+            // Stamp the first-shown time once; later shows leave it unchanged.
+            val firstKey = firstShownKey(tipId)
+            if (prefs[firstKey] == null) {
+                prefs[firstKey] = now
+            }
         }
     }
 
@@ -101,6 +107,7 @@ class DataStoreTipManager(
             prefs.remove(dismissedKey(tipId))
             prefs.remove(displayCountKey(tipId))
             prefs.remove(lastShownKey(tipId))
+            prefs.remove(firstShownKey(tipId))
         }
     }
 
@@ -188,6 +195,7 @@ class DataStoreTipManager(
             isDismissed = prefs[dismissedKey(tipId)] ?: false,
             displayCount = prefs[displayCountKey(tipId)] ?: 0,
             lastShownAtMillis = prefs[lastShownKey(tipId)],
+            firstShownAtMillis = prefs[firstShownKey(tipId)],
         )
     }
 
@@ -279,6 +287,9 @@ class DataStoreTipManager(
 
         private fun lastShownKey(tipId: String) =
             longPreferencesKey("$TIP_PREFIX$tipId.last_shown_at")
+
+        private fun firstShownKey(tipId: String) =
+            longPreferencesKey("$TIP_PREFIX$tipId.first_shown_at")
 
         // -- Counter keys --
 

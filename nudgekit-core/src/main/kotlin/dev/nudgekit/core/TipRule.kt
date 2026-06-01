@@ -45,6 +45,29 @@ sealed interface TipRule {
     }
 
     /**
+     * Passes only **before** [timestampMillis] (an absolute wall-clock instant
+     * in epoch milliseconds). At or after that instant the tip is [hidden][TipHideReason.Expired].
+     *
+     * Use for time-limited promos: `ExpiresAt(endOfCampaignMillis)`.
+     */
+    data class ExpiresAt(val timestampMillis: Long) : TipRule
+
+    /**
+     * Passes until [durationMillis] have elapsed since the tip was **first
+     * shown** ([TipState.firstShownAtMillis]). If the tip has never been shown,
+     * the window has not started, so this rule passes. After the window it is
+     * [hidden][TipHideReason.Expired].
+     *
+     * Use for "expire N days after the user first sees it":
+     * `ExpiresAfter(7 * 24 * 60 * 60 * 1000L)`.
+     */
+    data class ExpiresAfter(val durationMillis: Long) : TipRule {
+        init {
+            require(durationMillis > 0) { "ExpiresAfter durationMillis must be positive, was $durationMillis" }
+        }
+    }
+
+    /**
      * Passes when [predicate] returns `true`.
      *
      * Use this for app-specific eligibility logic that doesn't fit the built-in rules.

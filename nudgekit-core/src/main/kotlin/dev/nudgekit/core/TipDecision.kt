@@ -49,6 +49,12 @@ sealed interface TipHideReason {
         val elapsedMillis: Long,
     ) : TipHideReason
 
+    /**
+     * The tip's time window has passed — its [TipRule.ExpiresAt] instant is
+     * reached, or its [TipRule.ExpiresAfter] duration since first shown elapsed.
+     */
+    data object Expired : TipHideReason
+
     /** A [TipRule.Custom] predicate returned `false`. */
     data object CustomRuleFailed : TipHideReason
 }

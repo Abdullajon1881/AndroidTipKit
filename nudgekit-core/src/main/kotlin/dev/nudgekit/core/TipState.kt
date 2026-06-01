@@ -12,6 +12,7 @@ data class TipState(
     val isDismissed: Boolean = false,
     val displayCount: Int = 0,
     val lastShownAtMillis: Long? = null,
+    val firstShownAtMillis: Long? = null,
 ) {
     init {
         require(tipId.isNotBlank()) { "TipState tipId must not be blank" }

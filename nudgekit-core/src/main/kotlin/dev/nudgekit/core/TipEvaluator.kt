@@ -140,6 +140,20 @@ class TipEvaluator {
                 }
             }
 
+            is TipRule.ExpiresAt -> {
+                if (context.nowMillis >= rule.timestampMillis) TipHideReason.Expired else null
+            }
+
+            is TipRule.ExpiresAfter -> {
+                val firstShown = context.state.firstShownAtMillis
+                if (firstShown == null) {
+                    null // never shown → window not started → passes
+                } else {
+                    val elapsed = context.nowMillis - firstShown
+                    if (elapsed >= rule.durationMillis) TipHideReason.Expired else null
+                }
+            }
+
             is TipRule.Custom -> {
                 if (!rule.predicate(context)) TipHideReason.CustomRuleFailed else null
             }

@@ -80,9 +80,12 @@ class MemoryTipManager(
         require(tipId.isNotBlank()) { "Tip ID must not be blank" }
         state.update { s ->
             val current = s.tipStates[tipId] ?: TipState(tipId)
+            val now = clock()
             val updated = current.copy(
                 displayCount = current.displayCount + 1,
-                lastShownAtMillis = clock(),
+                lastShownAtMillis = now,
+                // Stamp the first-shown time once; later shows leave it unchanged.
+                firstShownAtMillis = current.firstShownAtMillis ?: now,
             )
             s.copy(tipStates = s.tipStates + (tipId to updated))
         }
