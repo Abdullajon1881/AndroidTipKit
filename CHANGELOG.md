@@ -7,6 +7,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-06-01
+
+First **stable** release. Promotes `1.0.0-rc.1` after a fresh-app dogfooding pass
+(an external JVM consumer exercising the full rule engine + `MemoryTipManager`,
+and an external Android app consuming the published Compose / managed / DataStore
+artifacts). The public API is now **stable** under semantic versioning.
+
+> **Distribution:** stable **source release on GitHub**. Maven Central publishing
+> is still pending (maintainer account / GPG key gated); the local publishing
+> dry-run (`publishToMavenLocal`, sources + Dokka javadoc + gated signing) works.
+
+### Fixed
+- **`nudgekit-core` now exposes `kotlinx-coroutines-core` as `api`** (was
+  `implementation`). The public core API returns `kotlinx.coroutines.flow.Flow`
+  (`ReactiveTipManager.observeTipState` / `observeCounters`) and is entirely
+  `suspend`, so an external consumer of the Android-free core could not compile
+  against the reactive/`suspend` surface without manually adding coroutines.
+  Promoting it to `api` puts coroutines on the consumer's compile classpath.
+  This is **additive and non-breaking** — it only widens an existing transitive
+  dependency's scope (runtime → compile). Found via fresh-app dogfooding.
+
+### Final status (feature-complete)
+- **Rule engine complete:** `NotDismissed`, `Once`, `MaxDisplayCount`,
+  `AfterEvent`, `AfterScreenVisits`, `MinIntervalHours`, `ExpiresAt`,
+  `ExpiresAfter`, `AnyOf`/`AllOf` (OR/AND, nestable), `Custom`.
+- **Tip groups + meaningful `priority`:** `Tip.groupId` + deterministic selector
+  (`TipEvaluator.select` / `ReactiveTipManager.selectEligible`).
+- **Time-bounded tips:** `ExpiresAt` / `ExpiresAfter` (+ `TipState.firstShownAtMillis`).
+- **`ReactiveTipManager`** abstraction; **`MemoryTipManager`** (in-memory) and
+  **`DataStoreTipManager`** (persistent) both implement it and drive the managed UI.
+- **Compose UI:** `InlineTip`, `TipBox` (pure); **managed UI:** `ManagedInlineTip`,
+  `ManagedTipBox`. **Accessibility baseline** (48 dp targets, heading semantics,
+  font scaling, contrast). **`TipAnalytics`** hooks.
+- **Docs + real screenshots**; **200 tests, 0 failures**
+  (`nudgekit-core` 131, `nudgekit-datastore` 47, `nudgekit-compose` 13,
+  `nudgekit-compose-datastore` 9).
+
+### Deferred (post-1.0, roadmap)
+Maven Central upload; KMP/iOS; real `TipBox` popover physics; animation
+customization; in-app debug overlay; automatic managed group coordination
+(`ManagedTipGroup`).
+
 ## [1.0.0-rc.1] - 2026-06-01
 
 Feature-complete **release candidate**. The rule engine is now complete (tip

@@ -1,11 +1,11 @@
 # Limitations
 
-NudgeKit is feature-complete at `1.0.0-rc.1`. This document is the honest list of what is intentionally out of scope or deferred, and the trade-offs you should know about before adopting it.
+NudgeKit is feature-complete and stable at `1.0.0`. This document is the honest list of what is intentionally out of scope or deferred, and the trade-offs you should know about before adopting it.
 
 ## Distribution
 
-- **Not published to Maven Central.** Coordinates like `io.github.abdullajon1881:nudgekit-core:1.0.0-rc.1` are placeholders. Use the modules locally for now (Git submodule + `includeBuild`, or vendored sources). The publishing dry-run (`publishToMavenLocal`) works; uploading to Central is the remaining maintainer-gated step.
-- **Tagged on GitHub.** Releases are tagged (`v1.0.0-rc.1`) as GitHub source releases. Semantic-versioning applies to the 1.0 line; the RC may still adjust the API before the final `1.0.0`.
+- **Not published to Maven Central.** Coordinates like `io.github.abdullajon1881:nudgekit-core:1.0.0` are placeholders. Use the modules locally for now (Git submodule + `includeBuild`, or vendored sources). The publishing dry-run (`publishToMavenLocal`) works; uploading to Central is the remaining maintainer-gated step.
+- **Stable source release on GitHub.** Releases are tagged (`v1.0.0`) as GitHub source releases under semantic versioning; breaking changes would mean a 2.0.
 
 ## Testing
 
@@ -40,7 +40,7 @@ Test counts:
 
 ## API stability
 
-NudgeKit is at **`1.0.0-rc.1`** — a release candidate. The public API is now considered **stable and frozen** for the 1.0 line; any change before the final `1.0.0` would be additive or documented with a migration note. The RC label exists so the surface can still flex if real-world adoption surfaces a genuine problem before 1.0 is finalized.
+NudgeKit is at **`1.0.0`** — a stable release. The public API is **stable under semantic versioning**: additive changes land in `1.x`, and a breaking change would mean `2.0`. Every user-affecting change is recorded in the CHANGELOG with a migration note when relevant.
 
 - **Stable (frozen for 1.0):** `Tip` (incl. `priority` / `groupId`), `TipState`, `TipCounters`, `TipContext`, `TipRule` (all variants), `TipDecision` / `TipHideReason`, `TipEvaluator` (incl. `select` / `TipSelection`), `TipManager`, `ReactiveTipManager` (incl. `selectEligible`), `MemoryTipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`).
 - **Most likely to evolve (additively):** new `TipRule` variants, `DataStoreTipManager`'s read/observe surface, and `NudgeTipDefaults` styling values.

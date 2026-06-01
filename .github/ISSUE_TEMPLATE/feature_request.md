@@ -6,7 +6,7 @@ labels: ["enhancement"]
 assignees: []
 ---
 
-> NudgeKit is a 1.0 release candidate; the API is frozen for the 1.0 line. Concrete, real-world use cases are still the strongest signal for new built-ins.
+> NudgeKit is stable (1.0); the public API follows semantic versioning. Concrete, real-world use cases are the strongest signal for new built-ins.
 
 ## Problem / use case
 

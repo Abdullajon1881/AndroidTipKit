@@ -27,7 +27,13 @@ kotlin {
 }
 
 dependencies {
-    implementation(libs.coroutines.core)
+    // `api`, not `implementation`: the public API exposes coroutine types
+    // (ReactiveTipManager returns kotlinx.coroutines.flow.Flow, and the whole
+    // manager/evaluator surface is `suspend`). Exposing it as `api` puts
+    // coroutines-core on the consumer's compile classpath, so external users of
+    // this Android-free core can call the reactive/suspend API without manually
+    // adding coroutines themselves.
+    api(libs.coroutines.core)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

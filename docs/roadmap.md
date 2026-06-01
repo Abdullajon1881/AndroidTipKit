@@ -30,10 +30,11 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 - [x] `ReactiveTipManager` abstraction — managed components depend on the interface, not concrete `DataStoreTipManager`; `MemoryTipManager` can now drive the managed UI for previews/tests.
 - [ ] Maven Central publishing (real GPG key, Sonatype account, upload). Dry-run + signing scaffolding already in place.
 
-## v1.0.0-rc.1 — Rule-engine completion (current)
+## v1.0.0 — Rule-engine completion (current)
 
-Feature-complete release candidate. Public API frozen for the 1.0 line (additive
-changes only before final 1.0.0). Tagged on GitHub; Maven Central still deferred.
+First stable release. Public API stable under semantic versioning (additive
+changes in 1.x; breaking changes would be 2.0). Stable source release tagged on
+GitHub; Maven Central still deferred.
 
 - [x] Tip groups / mutual exclusion ("only show one tip from this group at a time") via `Tip.groupId` + a deterministic selector.
 - [x] `priority` field becomes meaningful — used to pick the highest-priority eligible tip within a group (`TipEvaluator.select` / `ReactiveTipManager.selectEligible`). Higher priority wins; ties break by `id`.
@@ -73,4 +74,4 @@ These are explicitly **not** planned:
 
 ## How to influence the roadmap
 
-Open an issue describing your use case. Real-world tip patterns are the best forcing function for new built-in rules and components. Bug reports with reproduction steps are especially welcome while the library is pre-1.0.
+Open an issue describing your use case. Real-world tip patterns are the best forcing function for new built-in rules and components. Bug reports with reproduction steps are especially welcome.

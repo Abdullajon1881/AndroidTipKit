@@ -61,7 +61,7 @@ All state lives in one Preferences file as flat key-value pairs:
 | `event.<name>.count` | `Int` | `event.item_viewed.count = 5` |
 | `screen.<name>.count` | `Int` | `screen.settings.count = 2` |
 
-- `tip.<id>.first_shown_at` is **additive** (added in 1.0.0-rc.1) and stamped once on the first `markShown`; it backs `TipRule.ExpiresAfter`. Stores written by older versions simply lack the key and read back as `null` — **no migration is required**.
+- `tip.<id>.first_shown_at` is **additive** (added in 1.0.0) and stamped once on the first `markShown`; it backs `TipRule.ExpiresAfter`. Stores written by older versions simply lack the key and read back as `null` — **no migration is required**.
 - `reset(tipId)` removes only the `tip.<id>.*` keys (dismissed, display count, last-shown, first-shown). Counters are untouched.
 - `resetAll()` clears the entire Preferences file.
 

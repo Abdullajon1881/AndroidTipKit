@@ -2,19 +2,19 @@
 
 ## Project status
 
-NudgeKit is a **pre-1.0 release candidate (`1.0.0-rc.1`)**. It runs locally inside an Android app, uses AndroidX DataStore Preferences for on-device persistence, and makes **no network calls**. The attack surface is small, but the library does store user-visible state (dismissals, display counts, event counters), and bugs in that layer could leak or corrupt that state.
+NudgeKit is a **stable release (`1.0.0`)**. It runs locally inside an Android app, uses AndroidX DataStore Preferences for on-device persistence, and makes **no network calls**. The attack surface is small, but the library does store user-visible state (dismissals, display counts, event counters), and bugs in that layer could leak or corrupt that state.
 
 Please read this page before reporting anything you believe to be a security issue.
 
 ## Supported versions
 
-Until the project reaches a final `1.0.0`, only the latest commit on `main` (and the most recent published tag) is supported. Older pre-releases will not receive backported fixes.
+Only the latest `1.0.x` release (and the current `main`) is supported. Older pre-1.0 tags and pre-releases will not receive backported fixes.
 
 | Version    | Supported |
 |------------|:---------:|
 | `main`     | ✅ |
-| `1.0.0-rc.x` (latest tag) | ✅ |
-| Older pre-releases | ❌ |
+| `1.0.x` (latest tag) | ✅ |
+| Pre-1.0 tags / pre-releases | ❌ |
 
 ## Reporting a vulnerability
 

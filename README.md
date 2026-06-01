@@ -8,7 +8,8 @@ NudgeKit is an Android library for contextual tips, feature discovery hints, and
 
 Status:
 
-- Feature-complete release candidate (latest: 1.0.0-rc.1)
+- Stable release (latest: 1.0.0) — public API stable under semantic versioning
+- Stable source release available on GitHub; Maven Central publishing is pending
 - 200 tests passing in a correctly configured environment
 - sample app included
 - GitHub Actions CI configured
@@ -79,9 +80,9 @@ class MainActivity : ComponentActivity() {
 
 ## Installation
 
-NudgeKit is not published yet.
+NudgeKit 1.0.0 is a **stable source release on GitHub**. It is **not on Maven Central yet** (publishing is pending), so consume it locally for now.
 
-Planned future coordinates:
+Planned Maven Central coordinates (once published):
 
 ```kotlin
 implementation("io.github.abdullajon1881:nudgekit-core:<version>")
@@ -341,7 +342,7 @@ If you only need a tooltip, use a tooltip. If you need "show the right nudge at 
 
 ## Current Limitations
 
-- **Release-candidate API** — frozen for the 1.0 line; additive changes only before final `1.0.0` (see [API stability](docs/limitations.md#api-stability)).
+- **Stable API (1.0.0)** — public surface is stable under semantic versioning; breaking changes would mean a 2.0 (see [API stability](docs/limitations.md#api-stability)).
 - Not published to Maven Central yet — a local publishing dry-run (sources + Dokka javadoc + gated signing) is configured; use the modules locally for now.
 - managed components (`ManagedInlineTip`, `ManagedTipBox`) live in `nudgekit-compose-datastore`; `nudgekit-compose` is pure UI with no DataStore dependency.
 - managed components observe all counters through `observeCounters()` (intentional — `TipRule.Custom` can read any counter).
@@ -354,7 +355,7 @@ The tip components ship with sensible accessibility defaults: the dismiss button
 
 ## Roadmap
 
-Done in `1.0.0-rc.1`: tip groups / mutual exclusion (`Tip.priority` is now meaningful), time-bounded rules (`ExpiresAt` / `ExpiresAfter`), and OR/AND combinators (`AnyOf` / `AllOf`).
+Done in `1.0.0`: tip groups / mutual exclusion (`Tip.priority` is now meaningful), time-bounded rules (`ExpiresAt` / `ExpiresAfter`), and OR/AND combinators (`AnyOf` / `AllOf`).
 
 Near-term priorities (post-1.0):
 
