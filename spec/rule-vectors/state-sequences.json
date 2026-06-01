@@ -1,0 +1,134 @@
+[
+  {
+    "name": "trackEvent twice makes AfterEvent eligible",
+    "ops": [
+      { "op": "trackEvent", "name": "e" },
+      { "op": "trackEvent", "name": "e" }
+    ],
+    "asserts": {
+      "eventCounts": { "e": 2 },
+      "shouldShow": [
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterEvent", "eventName": "e", "count": 2 }] }, "nowMillis": 1000000000, "expected": true }
+      ]
+    }
+  },
+  {
+    "name": "markShown makes Once ineligible and stamps timestamps",
+    "clock": [100],
+    "ops": [{ "op": "markShown", "tipId": "t" }],
+    "asserts": {
+      "tipStates": { "t": { "displayCount": 1, "isDismissed": false, "lastShownAtMillis": 100, "firstShownAtMillis": 100 } },
+      "shouldShow": [
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "once" }] }, "nowMillis": 1000000000, "expected": false }
+      ]
+    }
+  },
+  {
+    "name": "markShown sets firstShownAtMillis only once",
+    "clock": [100, 500],
+    "ops": [
+      { "op": "markShown", "tipId": "t" },
+      { "op": "markShown", "tipId": "t" }
+    ],
+    "asserts": {
+      "tipStates": { "t": { "displayCount": 2, "lastShownAtMillis": 500, "firstShownAtMillis": 100 } }
+    }
+  },
+  {
+    "name": "ExpiresAfter measures from firstShownAtMillis",
+    "clock": [1000],
+    "ops": [{ "op": "markShown", "tipId": "t" }],
+    "asserts": {
+      "shouldShow": [
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 100 }] }, "nowMillis": 1050, "expected": true },
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 100 }] }, "nowMillis": 1100, "expected": false }
+      ]
+    }
+  },
+  {
+    "name": "dismiss makes NotDismissed ineligible",
+    "ops": [{ "op": "dismiss", "tipId": "t" }],
+    "asserts": {
+      "tipStates": { "t": { "isDismissed": true, "displayCount": 0 } },
+      "shouldShow": [
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "notDismissed" }] }, "nowMillis": 1000000000, "expected": false }
+      ]
+    }
+  },
+  {
+    "name": "reset clears tip state but preserves counters",
+    "clock": [100],
+    "ops": [
+      { "op": "trackEvent", "name": "e" },
+      { "op": "markShown", "tipId": "t" },
+      { "op": "reset", "tipId": "t" }
+    ],
+    "asserts": {
+      "tipStates": { "t": { "displayCount": 0, "isDismissed": false, "lastShownAtMillis": null, "firstShownAtMillis": null } },
+      "eventCounts": { "e": 1 }
+    }
+  },
+  {
+    "name": "resetAll clears tip state and counters",
+    "clock": [100],
+    "ops": [
+      { "op": "trackEvent", "name": "e" },
+      { "op": "trackScreen", "name": "s" },
+      { "op": "markShown", "tipId": "t" },
+      { "op": "resetAll" }
+    ],
+    "asserts": {
+      "tipStates": { "t": { "displayCount": 0, "firstShownAtMillis": null } },
+      "eventCounts": { "e": 0 },
+      "screenVisitCounts": { "s": 0 }
+    }
+  },
+  {
+    "name": "trackScreen twice makes AfterScreenVisits eligible",
+    "ops": [
+      { "op": "trackScreen", "name": "s" },
+      { "op": "trackScreen", "name": "s" }
+    ],
+    "asserts": {
+      "screenVisitCounts": { "s": 2 },
+      "shouldShow": [
+        { "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterScreenVisits", "screenName": "s", "count": 2 }] }, "nowMillis": 1000000000, "expected": true }
+      ]
+    }
+  },
+  {
+    "name": "selectEligible respects state mutations",
+    "ops": [{ "op": "dismiss", "tipId": "high" }],
+    "asserts": {
+      "selectEligible": [
+        {
+          "candidates": [
+            { "id": "high", "title": "t", "message": "t", "priority": 10, "groupId": "g", "rules": [{ "type": "notDismissed" }] },
+            { "id": "low", "title": "t", "message": "t", "priority": 1, "groupId": "g", "rules": [{ "type": "notDismissed" }] }
+          ],
+          "nowMillis": 1000000000,
+          "expectedSelectedId": "low"
+        }
+      ]
+    }
+  },
+  {
+    "name": "selectEligible returns null when all candidates dismissed",
+    "ops": [
+      { "op": "dismiss", "tipId": "a" },
+      { "op": "dismiss", "tipId": "b" }
+    ],
+    "asserts": {
+      "selectEligible": [
+        {
+          "candidates": [
+            { "id": "a", "title": "t", "message": "t", "priority": 5, "groupId": "g", "rules": [{ "type": "notDismissed" }] },
+            { "id": "b", "title": "t", "message": "t", "priority": 3, "groupId": "g", "rules": [{ "type": "notDismissed" }] }
+          ],
+          "nowMillis": 1000000000,
+          "expectedSelectedId": null
+        }
+      ]
+    }
+  }
+]

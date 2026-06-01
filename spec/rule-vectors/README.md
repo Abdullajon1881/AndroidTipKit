@@ -40,6 +40,37 @@ Array of selector cases. Each:
 }
 ```
 
+## `state-sequences.json`
+
+Manager-level cases: apply a sequence of operations to a `MemoryTipManager`,
+then assert state/counters/eligibility. Run by the TypeScript manager
+(`__tests__/state-sequences.test.ts`) and the Kotlin manager (`ParityStateVectorTest`).
+
+```jsonc
+{
+  "name": "...",
+  "clock": [100, 500],          // optional scripted clock; one value consumed per markShown
+  "ops": [
+    { "op": "trackEvent",  "name": "e" },
+    { "op": "trackScreen", "name": "s" },
+    { "op": "markShown",   "tipId": "t" },
+    { "op": "dismiss",     "tipId": "t" },
+    { "op": "reset",       "tipId": "t" },
+    { "op": "resetAll" }
+  ],
+  "asserts": {
+    "tipStates": { "<tipId>": { "displayCount?": n, "isDismissed?": b, "lastShownAtMillis?": n|null, "firstShownAtMillis?": n|null } },
+    "eventCounts": { "e": 2 },
+    "screenVisitCounts": { "s": 1 },
+    "shouldShow": [ { "tip": Tip, "nowMillis": n, "expected": b } ],
+    "selectEligible": [ { "candidates": [Tip, ...], "nowMillis": n, "expectedSelectedId": "id" | null } ]
+  }
+}
+```
+
+`shouldShow` / `selectEligible` always pass an explicit `nowMillis` so the
+scripted clock is consumed only by `markShown`, keeping both runners aligned.
+
 ## `Rule` shape
 
 ```jsonc

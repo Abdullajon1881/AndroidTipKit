@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **React Native / Expo — Phase 2 (headless managers + persistence)** in
+  `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
+  - `TipManager` / `ReactiveTipManager` contracts and `MemoryTipManager` — a TS
+    port of the Kotlin managers (`trackEvent`/`trackScreen`/`dismiss`/`markShown`/
+    `reset`/`resetAll`, synchronous `getTipState`/`getCounters`, `evaluate`/
+    `shouldShow`/`selectEligible`, injectable clock, blank-input validation,
+    write-once `firstShownAtMillis`).
+  - Reactive `subscribe` / `getSnapshot` (immutable snapshot, stable identity) —
+    `useSyncExternalStore`-ready for the Phase 3 React hooks.
+  - `TipStorage` abstraction + `MemoryStorage`, and `PersistentTipManager` /
+    `createPersistentTipManager(storage)` with write-through persistence and
+    corrupt-store resilience. `TipStorage` matches the AsyncStorage API so it can
+    be passed directly — **optional, no native module, Expo Go works**.
+  - `TipAnalytics` / `NoOpTipAnalytics` (types only; wired into UI in Phase 3).
+  - Shared `spec/rule-vectors/state-sequences.json` run by **both** the TS
+    manager (Jest) and the Kotlin `MemoryTipManager` (`ParityStateVectorTest`),
+    proving cross-language manager parity.
+  - Jest suite: **73 tests** passing (engine + managers + storage + analytics +
+    state-sequence parity). No React Native UI yet; no Expo config plugin yet.
+
 ## [1.0.0] - 2026-06-01
 
 First **stable** release. Promotes `1.0.0-rc.1` after a fresh-app dogfooding pass
