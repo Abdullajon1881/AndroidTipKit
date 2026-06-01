@@ -1,6 +1,6 @@
 # Getting Started
 
-This page is the shortest path to trying the current NudgeKit MVP.
+This page is the shortest path to trying NudgeKit.
 
 ## Modules
 

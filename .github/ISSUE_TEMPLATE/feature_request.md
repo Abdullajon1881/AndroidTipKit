@@ -6,7 +6,7 @@ labels: ["enhancement"]
 assignees: []
 ---
 
-> NudgeKit is in alpha. The API may still change. Concrete, real-world use cases are the strongest signal.
+> NudgeKit is a 1.0 release candidate; the API is frozen for the 1.0 line. Concrete, real-world use cases are still the strongest signal for new built-ins.
 
 ## Problem / use case
 

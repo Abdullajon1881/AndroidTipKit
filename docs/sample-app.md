@@ -1,6 +1,6 @@
 # Sample App
 
-The `:sample` module is a working Android app that demonstrates every part of the current MVP. Build and install it with:
+The `:sample` module is a working Android app that demonstrates every part of the library. Build and install it with:
 
 ```bash
 ./gradlew :sample:assembleDebug

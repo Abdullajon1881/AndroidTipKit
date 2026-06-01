@@ -6,7 +6,7 @@ Thanks for taking the time to look at NudgeKit. This document covers the practic
 
 NudgeKit is a Compose-first Android library for contextual tips, feature discovery hints, and onboarding nudges — inspired by Apple TipKit. It combines a rule engine, DataStore-backed persistence, and Material 3 Compose UI in one small library surface.
 
-**Status: alpha (0.1.x).** APIs may still change. Pre-1.0 PRs that change public types are welcome, but they need a clear rationale and a migration note.
+**Status: release candidate (`1.0.0-rc.1`).** The public API is frozen for the 1.0 line — additive changes only before the final `1.0.0`. PRs that change public types still need a clear rationale and a migration note.
 
 ## Repository layout
 
@@ -161,7 +161,7 @@ For small additions (a new built-in rule, a new optional parameter, a doc fix) y
 3. Run the verification commands listed above. All five must pass on JDK 17.
 4. Update `CHANGELOG.md` under `[Unreleased]` if the change is user-visible.
 5. Open a PR using the [pull request template](.github/PULL_REQUEST_TEMPLATE.md). The checklist exists to save review round-trips — please fill it in.
-6. Reviewer feedback is usually within a few days. Be patient on a pre-1.0 alpha.
+6. Reviewer feedback is usually within a few days. Be patient on a small pre-1.0 project.
 
 ## Commit messages
 

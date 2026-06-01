@@ -41,7 +41,7 @@ NudgeKit provides one small library surface for those concerns:
 - `nudgekit-datastore`: DataStore-backed persistence and evaluation helpers
 - `nudgekit-compose`: pure Compose UI components (`InlineTip`, `TipBox`) — no DataStore dependency
 - `nudgekit-compose-datastore`: state-aware managed components (`ManagedInlineTip`, `ManagedTipBox`)
-- `sample`: a demo app for the current MVP
+- `sample`: a demo app exercising the full library
 
 ## Quick Example
 

@@ -6,11 +6,11 @@ labels: ["bug"]
 assignees: []
 ---
 
-> NudgeKit is in alpha (0.1.x). Please confirm you are on the latest commit before filing.
+> NudgeKit is a 1.0 release candidate. Please confirm you are on the latest commit/tag before filing.
 
 ## Environment
 
-- **NudgeKit version / commit:** <!-- e.g. v0.1.0-alpha.1 or commit SHA -->
+- **NudgeKit version / commit:** <!-- e.g. v1.0.0-rc.1 or commit SHA -->
 - **Module(s) affected:** <!-- core / datastore / compose / sample -->
 - **Android version & API level:** <!-- e.g. Android 14, API 34 -->
 - **Kotlin version:** <!-- e.g. 2.1.0 -->

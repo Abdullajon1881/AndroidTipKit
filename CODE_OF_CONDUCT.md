@@ -48,4 +48,4 @@ Decisions are made by the maintainers and are not subject to debate in public th
 
 ## Attribution
 
-This Code of Conduct is inspired by the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/), trimmed down to fit a small alpha-stage project. It is not a substitute for the full Covenant; we reserve the right to adopt the full text in the future if the community grows.
+This Code of Conduct is inspired by the [Contributor Covenant 2.1](https://www.contributor-covenant.org/version/2/1/code_of_conduct/), trimmed down to fit a small early-stage project. It is not a substitute for the full Covenant; we reserve the right to adopt the full text in the future if the community grows.
