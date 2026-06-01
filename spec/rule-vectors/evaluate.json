@@ -1,0 +1,218 @@
+[
+  {
+    "name": "NotDismissed shows when not dismissed",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "notDismissed" }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "NotDismissed hides when dismissed",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "notDismissed" }] },
+    "state": { "tipId": "t", "isDismissed": true },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "dismissed" } }
+  },
+  {
+    "name": "Once shows when never shown",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "once" }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "Once hides after shown",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "once" }] },
+    "state": { "tipId": "t", "displayCount": 1 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "alreadyShownOnce" } }
+  },
+  {
+    "name": "MaxDisplayCount shows below cap",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "maxDisplayCount", "count": 2 }] },
+    "state": { "tipId": "t", "displayCount": 1 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "MaxDisplayCount hides at cap",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "maxDisplayCount", "count": 2 }] },
+    "state": { "tipId": "t", "displayCount": 2 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "maxDisplayCountReached" } }
+  },
+  {
+    "name": "AfterEvent hides below threshold",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterEvent", "eventName": "e", "count": 3 }] },
+    "state": { "tipId": "t" },
+    "counters": { "eventCounts": { "e": 2 } },
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "eventCountNotReached", "eventName": "e", "required": 3, "actual": 2 } }
+  },
+  {
+    "name": "AfterEvent shows at threshold",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterEvent", "eventName": "e", "count": 3 }] },
+    "state": { "tipId": "t" },
+    "counters": { "eventCounts": { "e": 3 } },
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "AfterScreenVisits hides below threshold",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterScreenVisits", "screenName": "s", "count": 2 }] },
+    "state": { "tipId": "t" },
+    "counters": { "screenVisitCounts": { "s": 1 } },
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "screenVisitCountNotReached", "screenName": "s", "required": 2, "actual": 1 } }
+  },
+  {
+    "name": "AfterScreenVisits shows at threshold",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "afterScreenVisits", "screenName": "s", "count": 2 }] },
+    "state": { "tipId": "t" },
+    "counters": { "screenVisitCounts": { "s": 2 } },
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "MinIntervalHours shows when never shown",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "minIntervalHours", "hours": 1 }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "MinIntervalHours hides within interval",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "minIntervalHours", "hours": 1 }] },
+    "state": { "tipId": "t", "lastShownAtMillis": 998200000 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "minIntervalNotReached", "requiredHours": 1, "elapsedMillis": 1800000 } }
+  },
+  {
+    "name": "MinIntervalHours shows after interval",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "minIntervalHours", "hours": 1 }] },
+    "state": { "tipId": "t", "lastShownAtMillis": 992800000 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "ExpiresAt shows before instant",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAt", "timestampMillis": 1000 }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 999,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "ExpiresAt hides at instant",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAt", "timestampMillis": 1000 }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000,
+    "expected": { "kind": "hide", "reason": { "type": "expired" } }
+  },
+  {
+    "name": "ExpiresAt hides after instant",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAt", "timestampMillis": 1000 }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 5000,
+    "expected": { "kind": "hide", "reason": { "type": "expired" } }
+  },
+  {
+    "name": "ExpiresAfter shows when never shown",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 1000 }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "ExpiresAfter shows inside window",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 1000 }] },
+    "state": { "tipId": "t", "firstShownAtMillis": 999999500 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "ExpiresAfter hides at window boundary",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 1000 }] },
+    "state": { "tipId": "t", "firstShownAtMillis": 999999000 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "expired" } }
+  },
+  {
+    "name": "ExpiresAfter hides past window",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "expiresAfter", "durationMillis": 1000 }] },
+    "state": { "tipId": "t", "firstShownAtMillis": 999998500 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "expired" } }
+  },
+  {
+    "name": "AnyOf shows when one branch passes",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "anyOf", "rules": [{ "type": "once" }, { "type": "notDismissed" }] }] },
+    "state": { "tipId": "t", "displayCount": 3 },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "AnyOf hides with noneMatched carrying every branch reason",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "anyOf", "rules": [{ "type": "once" }, { "type": "notDismissed" }] }] },
+    "state": { "tipId": "t", "displayCount": 1, "isDismissed": true },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "noneMatched", "reasons": [{ "type": "alreadyShownOnce" }, { "type": "dismissed" }] } }
+  },
+  {
+    "name": "AllOf shows when all branches pass",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "allOf", "rules": [{ "type": "notDismissed" }, { "type": "once" }] }] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "AllOf hides on first failing branch",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "allOf", "rules": [{ "type": "notDismissed" }, { "type": "once" }] }] },
+    "state": { "tipId": "t", "isDismissed": true },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "dismissed" } }
+  },
+  {
+    "name": "Rule list short-circuits on first failure",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "notDismissed" }, { "type": "once" }] },
+    "state": { "tipId": "t", "isDismissed": true },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "hide", "reason": { "type": "dismissed" } }
+  },
+  {
+    "name": "Nested AnyOf of AllOf evaluates correctly",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [{ "type": "anyOf", "rules": [{ "type": "allOf", "rules": [{ "type": "notDismissed" }, { "type": "once" }] }, { "type": "allOf", "rules": [{ "type": "afterEvent", "eventName": "seen", "count": 2 }] }] }] },
+    "state": { "tipId": "t", "isDismissed": true, "displayCount": 1 },
+    "counters": { "eventCounts": { "seen": 2 } },
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  },
+  {
+    "name": "Empty rule list always shows",
+    "tip": { "id": "t", "title": "t", "message": "t", "priority": 0, "groupId": null, "rules": [] },
+    "state": { "tipId": "t" },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expected": { "kind": "show" }
+  }
+]

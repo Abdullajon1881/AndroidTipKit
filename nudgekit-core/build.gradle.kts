@@ -39,6 +39,17 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.turbine)
+    // Parses the shared cross-language rule vectors in ParityVectorTest.
+    testImplementation("org.json:json:20240303")
+}
+
+// Expose the shared rule-vector directory (repo-root /spec/rule-vectors) to the
+// parity tests, regardless of the test working directory.
+tasks.withType<Test>().configureEach {
+    systemProperty(
+        "nudgekit.specDir",
+        rootProject.layout.projectDirectory.dir("spec/rule-vectors").asFile.absolutePath,
+    )
 }
 
 publishing {

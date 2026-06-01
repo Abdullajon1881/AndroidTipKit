@@ -1,0 +1,28 @@
+{
+  "name": "@nudgekit/react-native",
+  "version": "0.1.0-dev.0",
+  "description": "React Native / Expo bindings for NudgeKit — contextual tips, feature discovery, and onboarding nudges. Phase 1: TypeScript rule engine (parity with Kotlin NudgeKit).",
+  "private": true,
+  "license": "Apache-2.0",
+  "author": "Abdullajon1881",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Abdullajon1881/AndroidTipKit.git",
+    "directory": "packages/react-native"
+  },
+  "keywords": ["nudgekit", "tips", "onboarding", "react-native", "expo"],
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": ["src"],
+  "scripts": {
+    "test": "jest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.17.10",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
+    "typescript": "^5.6.3"
+  }
+}

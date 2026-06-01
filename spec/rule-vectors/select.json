@@ -1,0 +1,58 @@
+[
+  {
+    "name": "select picks highest priority",
+    "candidates": [
+      { "id": "low", "title": "t", "message": "t", "priority": 1, "groupId": "g", "rules": [] },
+      { "id": "high", "title": "t", "message": "t", "priority": 10, "groupId": "g", "rules": [] },
+      { "id": "mid", "title": "t", "message": "t", "priority": 5, "groupId": "g", "rules": [] }
+    ],
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expectedSelectedId": "high",
+    "expectedOrder": ["high", "mid", "low"]
+  },
+  {
+    "name": "select skips ineligible higher priority",
+    "candidates": [
+      { "id": "high", "title": "t", "message": "t", "priority": 10, "groupId": "g", "rules": [{ "type": "notDismissed" }] },
+      { "id": "low", "title": "t", "message": "t", "priority": 1, "groupId": "g", "rules": [{ "type": "notDismissed" }] }
+    ],
+    "states": { "high": { "tipId": "high", "isDismissed": true } },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expectedSelectedId": "low",
+    "expectedOrder": ["high", "low"]
+  },
+  {
+    "name": "select tie-breaks by id ascending (input-order independent)",
+    "candidates": [
+      { "id": "c", "title": "t", "message": "t", "priority": 5, "groupId": "g", "rules": [] },
+      { "id": "a", "title": "t", "message": "t", "priority": 5, "groupId": "g", "rules": [] },
+      { "id": "b", "title": "t", "message": "t", "priority": 5, "groupId": "g", "rules": [] }
+    ],
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expectedSelectedId": "a",
+    "expectedOrder": ["a", "b", "c"]
+  },
+  {
+    "name": "select returns null when none eligible",
+    "candidates": [
+      { "id": "t1", "title": "t", "message": "t", "priority": 0, "groupId": "g", "rules": [{ "type": "notDismissed" }] },
+      { "id": "t2", "title": "t", "message": "t", "priority": 0, "groupId": "g", "rules": [{ "type": "notDismissed" }] }
+    ],
+    "states": { "t1": { "tipId": "t1", "isDismissed": true }, "t2": { "tipId": "t2", "isDismissed": true } },
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expectedSelectedId": null,
+    "expectedOrder": ["t1", "t2"]
+  },
+  {
+    "name": "select on empty candidates returns null",
+    "candidates": [],
+    "counters": {},
+    "nowMillis": 1000000000,
+    "expectedSelectedId": null,
+    "expectedOrder": []
+  }
+]

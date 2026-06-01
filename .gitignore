@@ -16,3 +16,12 @@
 /local.properties
 local.properties
 *.hprof
+
+# JavaScript / TypeScript (packages/*, RN/Expo)
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.expo/
+npm-debug.log*
+yarn-error.log*
