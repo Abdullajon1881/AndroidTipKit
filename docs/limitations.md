@@ -1,11 +1,11 @@
 # Limitations
 
-NudgeKit is an MVP. This document is the honest list of what does not work yet, and the trade-offs you should know about before adopting it.
+NudgeKit is feature-complete at `1.0.0-rc.1`. This document is the honest list of what is intentionally out of scope or deferred, and the trade-offs you should know about before adopting it.
 
 ## Distribution
 
-- **Not published to Maven Central.** Coordinates like `io.github.abdullajon1881:nudgekit-core:0.3.0-alpha.1` are placeholders. Use the modules locally for now (Git submodule + `includeBuild`, or vendored sources).
-- **No version tags.** No semantic-versioning guarantees yet. APIs may change before the first published release.
+- **Not published to Maven Central.** Coordinates like `io.github.abdullajon1881:nudgekit-core:1.0.0-rc.1` are placeholders. Use the modules locally for now (Git submodule + `includeBuild`, or vendored sources). The publishing dry-run (`publishToMavenLocal`) works; uploading to Central is the remaining maintainer-gated step.
+- **Tagged on GitHub.** Releases are tagged (`v1.0.0-rc.1`) as GitHub source releases. Semantic-versioning applies to the 1.0 line; the RC may still adjust the API before the final `1.0.0`.
 
 ## Testing
 
@@ -14,11 +14,11 @@ NudgeKit is an MVP. This document is the honest list of what does not work yet, 
 
 Test counts:
 
-- `:nudgekit-core` — 78 unit tests, 0 failures.
-- `:nudgekit-datastore` — 44 unit tests, 0 failures.
-- `:nudgekit-compose` — 11 Compose UI tests (Robolectric), 0 failures.
-- `:nudgekit-compose-datastore` — 6 Compose UI tests (Robolectric), 0 failures.
-- Total: **139 tests, 0 failures**.
+- `:nudgekit-core` — 131 unit tests, 0 failures.
+- `:nudgekit-datastore` — 47 unit tests, 0 failures.
+- `:nudgekit-compose` — 13 Compose UI tests (Robolectric), 0 failures.
+- `:nudgekit-compose-datastore` — 9 Compose UI tests (Robolectric), 0 failures.
+- Total: **200 tests, 0 failures**.
 
 ## Module structure
 
@@ -35,21 +35,21 @@ Test counts:
 
 - **Single Preferences file.** All tip state and counters live in one file (`nudgekit_preferences`). Suitable for typical app usage (dozens of tips, modest event tracking) but not designed for thousands of entries.
 - **No migration support.** If the key schema changes between releases, you will have to handle the migration manually or call `resetAll()`. The schema is documented in [datastore.md](datastore.md) for stability.
-- **No TTL / auto-expiry.** Persisted state lives until the user uninstalls or you call `reset` / `resetAll`. An `ExpiresAfter` rule could be added later.
+- **Time-bounded tips are rule-driven, not storage TTL.** `TipRule.ExpiresAt` / `ExpiresAfter` stop a tip from showing after a deadline, but persisted state itself lives until the user uninstalls or you call `reset` / `resetAll` (there is no automatic purge of expired keys).
 - **DataStore singleton.** Creating two `DataStoreTipManager` instances pointing at the same file is officially undefined behavior. The sample uses an Activity-scoped instance for simplicity, but production apps should use one process-wide instance.
 
 ## API stability
 
-NudgeKit is **alpha**: the entire public API may change before `1.0.0`, and there are no backward-compatibility guarantees between alpha versions yet.
+NudgeKit is at **`1.0.0-rc.1`** — a release candidate. The public API is now considered **stable and frozen** for the 1.0 line; any change before the final `1.0.0` would be additive or documented with a migration note. The RC label exists so the surface can still flex if real-world adoption surfaces a genuine problem before 1.0 is finalized.
 
-- **Stable in shape (low churn expected):** `Tip`, `TipState`, `TipCounters`, `TipDecision` / `TipHideReason`, `TipManager`, `ReactiveTipManager`, `MemoryTipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`). These are the core value types and contracts; changes here would be additive where possible.
-- **Most likely to evolve:** `TipRule` (new rule types / a possible OR combinator), `Tip.priority` semantics (see below), `DataStoreTipManager`'s read/observe surface, and `NudgeTipDefaults` styling values.
+- **Stable (frozen for 1.0):** `Tip` (incl. `priority` / `groupId`), `TipState`, `TipCounters`, `TipContext`, `TipRule` (all variants), `TipDecision` / `TipHideReason`, `TipEvaluator` (incl. `select` / `TipSelection`), `TipManager`, `ReactiveTipManager` (incl. `selectEligible`), `MemoryTipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`).
+- **Most likely to evolve (additively):** new `TipRule` variants, `DataStoreTipManager`'s read/observe surface, and `NudgeTipDefaults` styling values.
 - Every change that affects users is recorded in [CHANGELOG.md](../CHANGELOG.md), with a migration note when it is breaking.
 
 ## Core API
 
-- **`priority` field is informational.** `Tip.priority` exists for future tip-group / mutual-exclusion features but is not used by the current evaluator.
-- **No OR combinator.** Rules are AND-ed together. For OR semantics, use `TipRule.Custom { … || … }`.
+- **`priority` and `groupId` drive mutual exclusion.** Use `ReactiveTipManager.selectEligible(group)` or `TipEvaluator.select(...)` to show one tip per group; higher `priority` wins, ties break by `id`. Grouping is app-driven (the managed Compose components do not auto-coordinate groups yet — that is deliberate).
+- **OR/AND combinators.** `TipRule.AnyOf` (OR) and `TipRule.AllOf` (AND) compose and nest; the top-level `rules` list is still AND-ed. `TipRule.Custom { … || … }` also works for ad-hoc logic.
 - **`TipRule.Custom` predicate equality is undefined.** It is intentionally not a `data class`. Comparing two `Custom` rules with `==` is meaningless.
 - **Analytics is opt-in.** `TipAnalytics` (+ `NoOpTipAnalytics`) lives in `nudgekit-core`; managed components take an optional `analytics` parameter. Pure-UI components don't — bridge their callbacks yourself.
 

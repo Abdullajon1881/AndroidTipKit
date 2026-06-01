@@ -113,6 +113,60 @@ val tip = Tip(
 
 Useful for periodic nudges that should not feel spammy. Combine with `MaxDisplayCount` to put a hard cap on appearances.
 
+## `ExpiresAt(timestampMillis)`
+
+Passes **before** an absolute wall-clock instant (epoch millis). At or after that instant the tip is hidden with `TipHideReason.Expired`.
+
+```kotlin
+val promo = Tip(
+    id = "summer_sale",
+    title = "Summer sale",
+    message = "20% off ends soon.",
+    rules = listOf(
+        TipRule.NotDismissed,
+        TipRule.ExpiresAt(endOfCampaignMillis), // hard cutoff date
+    ),
+)
+```
+
+Use for time-limited promotions that must never show after a fixed date.
+
+## `ExpiresAfter(durationMillis)`
+
+Passes until `durationMillis` have elapsed since the tip was **first shown** (`TipState.firstShownAtMillis`). If the tip has never been shown the window has not started, so the rule passes. After the window it is hidden with `TipHideReason.Expired`.
+
+```kotlin
+val onboardingHint = Tip(
+    id = "swipe_hint",
+    title = "Tip",
+    message = "Swipe left to archive.",
+    rules = listOf(
+        TipRule.NotDismissed,
+        TipRule.ExpiresAfter(7 * 24 * 60 * 60 * 1000L), // 7 days after first seen
+    ),
+)
+```
+
+`durationMillis` must be positive — enforced at construction.
+
+## `AnyOf(rules)` / `AllOf(rules)`
+
+Composite rules for **OR** / **AND** logic. `AnyOf` passes when **any** branch passes (first match short-circuits); `AllOf` passes when **all** branches pass (first failure short-circuits). They nest, so you can express `(A AND B) OR (C)`:
+
+```kotlin
+rules = listOf(
+    TipRule.NotDismissed,
+    TipRule.AnyOf(
+        listOf(
+            TipRule.AllOf(listOf(TipRule.AfterEvent("search_run", 5), TipRule.Once)),
+            TipRule.AfterScreenVisits("results", 3),
+        ),
+    ),
+)
+```
+
+When every branch of an `AnyOf` fails, the hide reason is `NoneMatched(reasons)`, carrying each branch's reason for debugging. Both require a non-empty rule list.
+
 ## `Custom(predicate)`
 
 For app-specific eligibility that the built-in rules don't cover. The predicate is a `suspend` lambda with a `TipContext` receiver:
@@ -137,14 +191,42 @@ val tip = Tip(
 
 ## Combining rules
 
-Rules are AND-ed together. There is no built-in OR. If you need OR semantics, combine them inside a single `Custom` rule:
+The top-level `rules` list is AND-ed together. For OR semantics use `AnyOf` (or, for ad-hoc logic, a single `Custom` rule):
 
 ```kotlin
+// Built-in OR — inspectable hide reasons:
+TipRule.AnyOf(
+    listOf(
+        TipRule.AfterEvent("search_run", 5),
+        TipRule.AfterScreenVisits("results", 3),
+    ),
+)
+
+// Or fold it into one Custom predicate:
 TipRule.Custom {
     counters.eventCount("search_run") >= 5 ||
         counters.screenVisitCount("results") >= 3
 }
 ```
+
+## Mutual exclusion (tip groups + priority)
+
+To show only **one** tip from a set at a time, give the candidates a shared `groupId` and let a selector pick the highest-`priority` eligible one. Higher `priority` wins; ties break by `id`.
+
+```kotlin
+val tips = listOf(
+    Tip(id = "a", title = "...", message = "...", priority = 10, groupId = "home"),
+    Tip(id = "b", title = "...", message = "...", priority = 5, groupId = "home"),
+)
+
+// Ergonomic: returns the single tip to show, or null.
+val winner: Tip? = manager.selectEligible(tips.filter { it.groupId == "home" })
+
+// Or, for the full per-candidate breakdown (each tip's hide reason):
+val selection = TipEvaluator().select(tips, stateFor = { manager.getTipState(it.id) }, counters)
+```
+
+A tip with `groupId == null` is ungrouped and is never excluded by another tip. See [core-concepts.md](core-concepts.md) for the selector API.
 
 ## When a rule fails
 
@@ -158,6 +240,10 @@ TipRule.Custom {
 | `AfterEvent` | `EventCountNotReached(name, required, actual)` |
 | `AfterScreenVisits` | `ScreenVisitCountNotReached(name, required, actual)` |
 | `MinIntervalHours` | `MinIntervalNotReached(requiredHours, elapsedMillis)` |
+| `ExpiresAt` | `Expired` |
+| `ExpiresAfter` | `Expired` |
+| `AnyOf` | `NoneMatched(reasons)` (all branches failed) |
+| `AllOf` | the first failing branch's reason |
 | `Custom` | `CustomRuleFailed` |
 
 Useful for debug overlays, analytics, or "Why isn't this tip showing?" inspector screens.

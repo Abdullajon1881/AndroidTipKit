@@ -8,8 +8,8 @@ NudgeKit is an Android library for contextual tips, feature discovery hints, and
 
 Status:
 
-- MVP implemented (latest: 0.3.0-alpha.1)
-- 139 tests passing in a correctly configured environment
+- Feature-complete release candidate (latest: 1.0.0-rc.1)
+- 200 tests passing in a correctly configured environment
 - sample app included
 - GitHub Actions CI configured
 - local Maven publishing dry-run configured (`publishToMavenLocal`)
@@ -180,8 +180,9 @@ scope.launch {
 
 ## Core Concepts
 
-- `Tip`: immutable value object with `id`, `title`, `message`, optional `actionLabel`, optional `priority`, and a list of `TipRule`
-- `TipRule`: built-in rules include `NotDismissed`, `Once`, `MaxDisplayCount`, `AfterEvent`, `AfterScreenVisits`, `MinIntervalHours`, and `Custom`
+- `Tip`: immutable value object with `id`, `title`, `message`, optional `actionLabel`, optional `priority`, optional `groupId`, and a list of `TipRule`
+- `TipRule`: built-in rules include `NotDismissed`, `Once`, `MaxDisplayCount`, `AfterEvent`, `AfterScreenVisits`, `MinIntervalHours`, `ExpiresAt`, `ExpiresAfter`, `AnyOf`/`AllOf` (OR/AND), and `Custom`
+- Mutual exclusion: give tips a shared `groupId` and use `manager.selectEligible(group)` (or `TipEvaluator.select`) to show only the highest-`priority` eligible tip
 - `TipState`: per-tip dismissed state, display count, and last shown timestamp
 - `TipCounters`: app-wide event counts and screen visit counts
 - `TipManager`: write-side lifecycle interface
@@ -190,6 +191,23 @@ scope.launch {
 - `MemoryTipManager`: in-memory `ReactiveTipManager` in `nudgekit-core` for tests, previews, and sample/debug flows (no Android, nothing persisted) — can drive the managed components directly
 - Managed UI: `ManagedInlineTip` and `ManagedTipBox` (accept any `ReactiveTipManager`)
 - `TipAnalytics`: SDK-agnostic hook for observing tip lifecycle events (`onTipShown`, `onTipDismissed`, `onTipActionClicked`)
+
+## Tip groups (show only one)
+
+Give competing tips a shared `groupId` and a `priority`, then let the selector pick the single highest-priority eligible one. Higher `priority` wins; ties break by `id`.
+
+```kotlin
+val homeTips = listOf(
+    Tip(id = "filters",    title = "Filters",    message = "...", priority = 10, groupId = "home"),
+    Tip(id = "favorites",  title = "Favorites",  message = "...", priority = 5,  groupId = "home"),
+)
+
+// Returns the one tip to show right now, or null if none are eligible.
+val winner: Tip? = manager.selectEligible(homeTips)
+winner?.let { InlineTip(tip = it, onDismiss = { /* manager.dismiss(it.id) */ } ) }
+```
+
+For a full per-candidate breakdown (each tip's `TipHideReason`), use `TipEvaluator.select(...)`. See [docs/core-concepts.md](docs/core-concepts.md#selecting-one-tip-from-a-group).
 
 ## Analytics
 
@@ -323,7 +341,7 @@ If you only need a tooltip, use a tooltip. If you need "show the right nudge at 
 
 ## Current Limitations
 
-- **Alpha API** — the public surface may change before `1.0.0` (see [API stability](docs/limitations.md#api-stability)).
+- **Release-candidate API** — frozen for the 1.0 line; additive changes only before final `1.0.0` (see [API stability](docs/limitations.md#api-stability)).
 - Not published to Maven Central yet — a local publishing dry-run (sources + Dokka javadoc + gated signing) is configured; use the modules locally for now.
 - managed components (`ManagedInlineTip`, `ManagedTipBox`) live in `nudgekit-compose-datastore`; `nudgekit-compose` is pure UI with no DataStore dependency.
 - managed components observe all counters through `observeCounters()` (intentional — `TipRule.Custom` can read any counter).
@@ -336,11 +354,13 @@ The tip components ship with sensible accessibility defaults: the dismiss button
 
 ## Roadmap
 
-Near-term priorities:
+Done in `1.0.0-rc.1`: tip groups / mutual exclusion (`Tip.priority` is now meaningful), time-bounded rules (`ExpiresAt` / `ExpiresAfter`), and OR/AND combinators (`AnyOf` / `AllOf`).
+
+Near-term priorities (post-1.0):
 
 - deeper accessibility audit (TalkBack focus order, dynamic-type stress, measured contrast)
-- tip groups / mutual exclusion (make `Tip.priority` meaningful)
-- improve `TipBox` anchoring toward a true popover
+- improve `TipBox` anchoring toward a true popover; animation customization
+- automatic group coordination in the managed components (`ManagedTipGroup`)
 - prepare Maven Central publishing (real GPG key + Sonatype account)
 
 ## Documentation

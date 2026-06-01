@@ -77,7 +77,7 @@ Documentation lives under [`docs/`](docs/). The [README](README.md) is the entry
 ./gradlew build
 ```
 
-Expected: all tasks `BUILD SUCCESSFUL`, **139 tests, 0 failures** (78 in `nudgekit-core`, 44 in `nudgekit-datastore`, 11 in `nudgekit-compose`, 6 in `nudgekit-compose-datastore`).
+Expected: all tasks `BUILD SUCCESSFUL`, **200 tests, 0 failures** (131 in `nudgekit-core`, 47 in `nudgekit-datastore`, 13 in `nudgekit-compose`, 9 in `nudgekit-compose-datastore`).
 
 ## Publishing (maintainers, dry-run)
 

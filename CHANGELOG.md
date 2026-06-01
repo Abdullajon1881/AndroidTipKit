@@ -7,21 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0-rc.1] - 2026-06-01
+
+Feature-complete **release candidate**. The rule engine is now complete (tip
+groups + meaningful `priority`, time-bounded rules, OR/AND combinators) and the
+public API is **frozen for the 1.0 line** — only additive changes are expected
+before the final `1.0.0`. **Still not published to Maven Central** (GitHub source
+release; Central upload remains maintainer-gated). All public changes are
+**additive and source-compatible**.
+
 ### Added
+- **Tip groups + meaningful `priority` (mutual exclusion).** New `Tip.groupId: String?`
+  and a deterministic selector that shows only one tip per group: the highest-`priority`
+  eligible candidate, ties broken by `id`. Entry points: pure `TipEvaluator.select(candidates, stateFor, counters, now)` returning a `TipSelection(selected, decisions)` (every candidate's `TipDecision` preserved for debugging), and the ergonomic `ReactiveTipManager.selectEligible(candidates): Tip?`. The managed Compose components are intentionally **not** auto-coordinated yet.
+- **Time-bounded rules.** `TipRule.ExpiresAt(timestampMillis)` (hide at/after an absolute instant) and `TipRule.ExpiresAfter(durationMillis)` (hide once a duration has elapsed since the tip was first shown), plus `TipHideReason.Expired`. Backed by a new `TipState.firstShownAtMillis`, stamped **write-once** on the first `markShown` (Memory + DataStore); `reset` clears it. The DataStore key (`tip.<id>.first_shown_at`) is additive — older stores read it back as `null`, **no migration required**.
+- **OR/AND combinators.** `TipRule.AnyOf(rules)` (passes if any branch passes) and `TipRule.AllOf(rules)` (passes if all pass); both nest. Failing `AnyOf` reports `TipHideReason.NoneMatched(reasons)` carrying each branch's reason. Both require a non-empty list.
 - `ReactiveTipManager` interface in `nudgekit-core` — a `TipManager` that also exposes reactive reads (`observeTipState`, `observeCounters`) and `shouldShow(tip)`. It's the contract the managed Compose components depend on, so they no longer require the concrete `DataStoreTipManager`. Stays Android-free (references only `Flow` + core types).
 - `MemoryTipManager` — an in-memory `ReactiveTipManager` in `nudgekit-core` (no Android, no DataStore, nothing persisted) for tests, Compose previews, and sample/debug flows. Mirrors `DataStoreTipManager`'s behaviour and validation, takes the same injectable `clock`, exposes synchronous `getTipState` / `getCounters` and suspend `evaluate` / `shouldShow`. Backed by a `MutableStateFlow` snapshot (atomic writes, thread-safe without a lock), which also provides the reactive reads — so it can drive `ManagedInlineTip` / `ManagedTipBox` directly.
 - Real README screenshot gallery: light + dark captures from the sample app on a device (`docs/images/`), replacing the placeholder scaffold.
 - Sample app now follows the system light/dark theme (`MaterialTheme` uses `lightColorScheme()` / `darkColorScheme()` via `isSystemInDarkTheme()`), and demonstrates a `TipPosition.Top` anchored `TipBox` in addition to the existing Bottom one.
-- API-stability documentation in `docs/limitations.md` (which types are stable vs. likely to change before 1.0).
+- API-stability documentation in `docs/limitations.md` (which types are stable vs. likely to evolve).
 - Accessibility tests for `InlineTip`: the dismiss control exposes a click action, and the title is exposed as a heading.
 
 ### Changed
-- `ManagedInlineTip` / `ManagedTipBox` now accept `ReactiveTipManager` instead of the concrete `DataStoreTipManager`. **Source-compatible** — `DataStoreTipManager` implements `ReactiveTipManager`, so existing call sites are unchanged. (The parameter type changes the JVM signature; since nothing is published to Maven Central yet, there are no precompiled consumers to break.)
+- `Tip.priority` is now **meaningful** — consumed by the new selector to pick the highest-priority eligible tip in a group (previously informational).
+- `ManagedInlineTip` / `ManagedTipBox` now accept `ReactiveTipManager` instead of the concrete `DataStoreTipManager`. **Source-compatible** — `DataStoreTipManager` implements `ReactiveTipManager`, so existing call sites are unchanged.
 - `DataStoreTipManager` and `MemoryTipManager` now implement `ReactiveTipManager`. Their `shouldShow(tip)` (no-arg-time) is the interface method (uses the injected clock); the explicit-time `shouldShow(tip, nowMillis)` overload lost its default but remains available — `shouldShow(tip)` and `shouldShow(tip, t)` both still compile and behave identically.
 - **Accessibility:** `InlineTip`'s dismiss button now keeps the Material **48 dp** minimum touch target (was an explicit 40 dp) while the close glyph stays compact (20 dp). The tip **title** is exposed as a heading (`semantics { heading() }`). The default dismiss-icon tint contrast was raised (alpha 0.6 → 0.74) for readability in both themes.
 
+### Tests
+- **200 tests, 0 failures** — `nudgekit-core` 131, `nudgekit-datastore` 47, `nudgekit-compose` 13, `nudgekit-compose-datastore` 9.
+
 ### Notes
-- All changes are **source-compatible** with existing call sites (sample, tests, README snippets all unchanged). The managed-component parameter-type change is binary-incompatible but moot pre-publish.
+- All changes are **source-compatible** with existing call sites (sample, tests, README snippets unchanged). New `data class` fields/variants change JVM/binary signatures, but nothing is published to Maven Central, so there are no precompiled consumers to break.
+- This is a **release candidate**: the API is frozen for 1.0 but may still adjust before the final `1.0.0` if real-world adoption surfaces a genuine problem.
 
 ## [0.3.0-alpha.1] - 2026-05-29
 

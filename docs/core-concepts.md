@@ -40,18 +40,19 @@ data class Tip(
     val actionLabel: String? = null,
     val priority: Int = 0,
     val rules: List<TipRule> = listOf(TipRule.NotDismissed),
+    val groupId: String? = null,
 )
 ```
 
 - `id` is the persistence key, and must be **unique and stable** across the app. Two tips sharing an `id` would share and corrupt each other's state; changing an `id` later resets that tip's history. Choose a descriptive, permanent string.
-- All string fields must be non-blank (`require` runs in `init`).
-- `priority` is currently informational. It will be used by tip-group features in a later release.
+- All string fields must be non-blank (`require` runs in `init`); `groupId` must be `null` or non-blank.
+- `priority` and `groupId` drive **mutual exclusion**: among tips sharing a `groupId`, a selector picks the single highest-`priority` eligible tip. **Higher `priority` wins**; ties break by `id`. A `null` `groupId` means ungrouped — never excluded by another tip. See [Selecting one tip from a group](#selecting-one-tip-from-a-group).
 
 ## `TipRule`
 
 A sealed interface describing eligibility. Rules are evaluated in declaration order; the first one that fails short-circuits evaluation.
 
-Built-in rules: `NotDismissed`, `Once`, `MaxDisplayCount`, `AfterEvent`, `AfterScreenVisits`, `MinIntervalHours`, `Custom`. See [rules.md](rules.md) for examples of each.
+Built-in rules: `NotDismissed`, `Once`, `MaxDisplayCount`, `AfterEvent`, `AfterScreenVisits`, `MinIntervalHours`, `ExpiresAt`, `ExpiresAfter`, `AnyOf`, `AllOf`, `Custom`. `AnyOf`/`AllOf` are composite (OR/AND) and nest. See [rules.md](rules.md) for examples of each.
 
 ## `TipState`
 
@@ -63,10 +64,11 @@ data class TipState(
     val isDismissed: Boolean = false,
     val displayCount: Int = 0,
     val lastShownAtMillis: Long? = null,
+    val firstShownAtMillis: Long? = null,
 )
 ```
 
-You normally do not construct `TipState` yourself — the manager produces it. Default values represent a tip that has never been shown or dismissed.
+You normally do not construct `TipState` yourself — the manager produces it. Default values represent a tip that has never been shown or dismissed. `firstShownAtMillis` is stamped **once**, on the first `markShown`, and never overwritten (later shows only advance `lastShownAtMillis`); it is what `TipRule.ExpiresAfter` measures from.
 
 ## `TipCounters`
 
@@ -120,7 +122,9 @@ sealed interface TipHideReason {
     data class  EventCountNotReached(val eventName: String, val required: Int, val actual: Int) : TipHideReason
     data class  ScreenVisitCountNotReached(val screenName: String, val required: Int, val actual: Int) : TipHideReason
     data class  MinIntervalNotReached(val requiredHours: Int, val elapsedMillis: Long) : TipHideReason
+    data object Expired : TipHideReason
     data object CustomRuleFailed : TipHideReason
+    data class  NoneMatched(val reasons: List<TipHideReason>) : TipHideReason
 }
 ```
 
@@ -142,6 +146,36 @@ class TipEvaluator {
 ```
 
 Pure function (apart from clock). 100% Android-free.
+
+## Selecting one tip from a group
+
+For mutual exclusion — "show only one tip from this group at a time" — NudgeKit provides a deterministic selector. Candidates are considered in **`priority` descending, then `id` ascending** order, and the first eligible one wins (or `null` if none are eligible). This is what makes `Tip.priority` meaningful.
+
+Two entry points, both Android-free:
+
+```kotlin
+// 1) Ergonomic — on any ReactiveTipManager, returns the single tip to show (or null).
+//    Uses the manager's persisted state + clock via shouldShow.
+val winner: Tip? = manager.selectEligible(group)   // group = tips.filter { it.groupId == "home" }
+
+// 2) Pure — full per-candidate breakdown for debugging / "why isn't this showing?" UIs.
+val selection: TipSelection = TipEvaluator().select(
+    candidates = group,
+    stateFor = { manager.getTipState(it.id) },
+    counters = manager.getCounters(),
+)
+selection.selected            // highest-priority eligible Tip, or null
+selection.decisions           // every candidate's TipDecision, in evaluation order
+```
+
+```kotlin
+data class TipSelection(
+    val selected: Tip?,
+    val decisions: List<Decision>,
+) { data class Decision(val tip: Tip, val decision: TipDecision) }
+```
+
+The selector does **not** read `groupId` itself — pass a pre-filtered group. Grouping is app-driven; the managed Compose components do not auto-coordinate groups (that is deliberate — render the `selected` tip yourself).
 
 ## `TipManager`
 

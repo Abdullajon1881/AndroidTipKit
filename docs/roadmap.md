@@ -16,7 +16,7 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 - [x] Initial Compose UI tests for the pure-UI components (`InlineTip`, `TipBox`).
 - [x] SDK-agnostic `TipAnalytics` hooks wired into the managed components.
 
-## v0.3 — Hardening (current, 0.3.0-alpha.1)
+## v0.3 — Hardening (shipped, 0.3.0-alpha.1)
 
 - [x] DataStore IO-error resilience + safe single-instance `create()`.
 - [x] Compose UI tests for the managed variants (`ManagedInlineTip`, `ManagedTipBox`).
@@ -30,13 +30,22 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 - [x] `ReactiveTipManager` abstraction — managed components depend on the interface, not concrete `DataStoreTipManager`; `MemoryTipManager` can now drive the managed UI for previews/tests.
 - [ ] Maven Central publishing (real GPG key, Sonatype account, upload). Dry-run + signing scaffolding already in place.
 
-## v0.3 — UX and ergonomics
+## v1.0.0-rc.1 — Rule-engine completion (current)
+
+Feature-complete release candidate. Public API frozen for the 1.0 line (additive
+changes only before final 1.0.0). Tagged on GitHub; Maven Central still deferred.
+
+- [x] Tip groups / mutual exclusion ("only show one tip from this group at a time") via `Tip.groupId` + a deterministic selector.
+- [x] `priority` field becomes meaningful — used to pick the highest-priority eligible tip within a group (`TipEvaluator.select` / `ReactiveTipManager.selectEligible`). Higher priority wins; ties break by `id`.
+- [x] `TipRule.ExpiresAt(timestampMillis)` and `TipRule.ExpiresAfter(durationMillis)` for time-bounded tips (+ `TipState.firstShownAtMillis`).
+- [x] `TipRule.AnyOf` / `TipRule.AllOf` — composable OR/AND combinators (nestable).
+- [x] 200 passing tests across all four modules.
+
+## Post-1.0 — UX and ergonomics
 
 - [ ] Real popover physics for `TipBox` Start/End positions (proper positioning, arrow, edge clamping).
-- [ ] Animation customization on `InlineTip` (caller-supplied `EnterTransition` / `ExitTransition`).
-- [ ] Tip groups / mutual exclusion ("only show one tip from this group at a time").
-- [ ] `priority` field becomes meaningful — used to pick the highest-priority eligible tip within a group.
-- [ ] `TipRule.ExpiresAt(timestampMillis)` and `TipRule.ExpiresAfter(durationMillis)` for time-bounded tips.
+- [ ] Animation customization on `InlineTip` / `TipBox` (caller-supplied `EnterTransition` / `ExitTransition`).
+- [ ] Automatic group coordination in the managed Compose components (`ManagedTipGroup`) — core selector ships now; UI auto-mutual-exclusion is deferred.
 - [x] Optional `TipAnalytics` interface so consumers can observe `onTipShown`, `onTipDismissed`, `onTipActionClicked`. SDK-agnostic, no bundled dependency; wired into the managed components.
 
 ## v0.4 — KMP and broader reach
