@@ -18,8 +18,8 @@ the Gradle dependency you add differs.
 |------------|--------|:---:|---|
 | `InlineTip` | `nudgekit-compose` | yes | always rendered (caller controls visibility) |
 | `TipBox` | `nudgekit-compose` | yes | controlled by the `visible: Boolean` parameter |
-| `ManagedInlineTip` | `nudgekit-compose-datastore` | no | resolved automatically from a `DataStoreTipManager` |
-| `ManagedTipBox` | `nudgekit-compose-datastore` | no | resolved automatically from a `DataStoreTipManager` |
+| `ManagedInlineTip` | `nudgekit-compose-datastore` | no | resolved automatically from a `ReactiveTipManager` |
+| `ManagedTipBox` | `nudgekit-compose-datastore` | no | resolved automatically from a `ReactiveTipManager` |
 
 ```kotlin
 // Pure UI only — no DataStore on the classpath
@@ -107,13 +107,13 @@ TipBox(
 
 ## `ManagedInlineTip`
 
-The state-aware version of `InlineTip`. Connects to a `DataStoreTipManager`, evaluates rules, and handles `markShown` / `dismiss` automatically.
+The state-aware version of `InlineTip`. Connects to a `ReactiveTipManager` — `DataStoreTipManager` in production, or `MemoryTipManager` for previews/tests — evaluates rules, and handles `markShown` / `dismiss` automatically.
 
 ```kotlin
 @Composable
 fun ManagedInlineTip(
     tip: Tip,
-    manager: DataStoreTipManager,
+    manager: ReactiveTipManager,
     modifier: Modifier = Modifier,
     colors: NudgeTipColors = NudgeTipDefaults.colors(),
     onActionClick: (() -> Unit)? = null,
@@ -151,7 +151,7 @@ The state-aware version of `TipBox`. Same visibility behavior as `ManagedInlineT
 @Composable
 fun ManagedTipBox(
     tip: Tip,
-    manager: DataStoreTipManager,
+    manager: ReactiveTipManager,
     modifier: Modifier = Modifier,
     position: TipPosition = TipPosition.Bottom,
     colors: NudgeTipColors = NudgeTipDefaults.colors(),

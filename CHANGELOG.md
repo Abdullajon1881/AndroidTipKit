@@ -8,17 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- `MemoryTipManager` — an in-memory `TipManager` in `nudgekit-core` (no Android, no DataStore, nothing persisted) for tests, Compose previews, and sample/debug flows. Mirrors `DataStoreTipManager`'s behaviour and validation, takes the same injectable `clock`, exposes synchronous `getTipState` / `getCounters` and suspend `evaluate` / `shouldShow`, and is thread-safe via a single monitor. 21 unit tests.
+- `ReactiveTipManager` interface in `nudgekit-core` — a `TipManager` that also exposes reactive reads (`observeTipState`, `observeCounters`) and `shouldShow(tip)`. It's the contract the managed Compose components depend on, so they no longer require the concrete `DataStoreTipManager`. Stays Android-free (references only `Flow` + core types).
+- `MemoryTipManager` — an in-memory `ReactiveTipManager` in `nudgekit-core` (no Android, no DataStore, nothing persisted) for tests, Compose previews, and sample/debug flows. Mirrors `DataStoreTipManager`'s behaviour and validation, takes the same injectable `clock`, exposes synchronous `getTipState` / `getCounters` and suspend `evaluate` / `shouldShow`. Backed by a `MutableStateFlow` snapshot (atomic writes, thread-safe without a lock), which also provides the reactive reads — so it can drive `ManagedInlineTip` / `ManagedTipBox` directly.
 - Real README screenshot gallery: light + dark captures from the sample app on a device (`docs/images/`), replacing the placeholder scaffold.
 - Sample app now follows the system light/dark theme (`MaterialTheme` uses `lightColorScheme()` / `darkColorScheme()` via `isSystemInDarkTheme()`), and demonstrates a `TipPosition.Top` anchored `TipBox` in addition to the existing Bottom one.
 - API-stability documentation in `docs/limitations.md` (which types are stable vs. likely to change before 1.0).
 - Accessibility tests for `InlineTip`: the dismiss control exposes a click action, and the title is exposed as a heading.
 
 ### Changed
-- **Accessibility:** `InlineTip`'s dismiss button now keeps the Material **48 dp** minimum touch target (was an explicit 40 dp) while the close glyph stays compact (20 dp). The tip **title** is exposed as a heading (`semantics { heading() }`). The default dismiss-icon tint contrast was raised (alpha 0.6 → 0.74) for readability in both themes. These are additive — no public API changed.
+- `ManagedInlineTip` / `ManagedTipBox` now accept `ReactiveTipManager` instead of the concrete `DataStoreTipManager`. **Source-compatible** — `DataStoreTipManager` implements `ReactiveTipManager`, so existing call sites are unchanged. (The parameter type changes the JVM signature; since nothing is published to Maven Central yet, there are no precompiled consumers to break.)
+- `DataStoreTipManager` and `MemoryTipManager` now implement `ReactiveTipManager`. Their `shouldShow(tip)` (no-arg-time) is the interface method (uses the injected clock); the explicit-time `shouldShow(tip, nowMillis)` overload lost its default but remains available — `shouldShow(tip)` and `shouldShow(tip, t)` both still compile and behave identically.
+- **Accessibility:** `InlineTip`'s dismiss button now keeps the Material **48 dp** minimum touch target (was an explicit 40 dp) while the close glyph stays compact (20 dp). The tip **title** is exposed as a heading (`semantics { heading() }`). The default dismiss-icon tint contrast was raised (alpha 0.6 → 0.74) for readability in both themes.
 
 ### Notes
-- No public API changes in this set — additive accessibility/semantics improvements, default-value tweaks, tests, and docs only.
+- All changes are **source-compatible** with existing call sites (sample, tests, README snippets all unchanged). The managed-component parameter-type change is binary-incompatible but moot pre-publish.
 
 ## [0.3.0-alpha.1] - 2026-05-29
 

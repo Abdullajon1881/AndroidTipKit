@@ -26,6 +26,8 @@ Planned work, in roughly the order we expect to tackle it. Subject to change bas
 - [x] 139 passing tests across `nudgekit-core` (78), `nudgekit-datastore` (44), `nudgekit-compose` (11), and `nudgekit-compose-datastore` (6).
 - [x] Accessibility pass on the tip components: 48 dp dismiss touch target, title heading semantics, font-scale-friendly text, improved dismiss-icon contrast. (A deeper audit — TalkBack focus order, dynamic-type stress, measured contrast — remains for B.2.)
 - [x] API-stability documentation (stable vs. likely-to-change surface) in `docs/limitations.md`.
+- [x] `MemoryTipManager` in `nudgekit-core` for tests / previews / KMP-friendly use.
+- [x] `ReactiveTipManager` abstraction — managed components depend on the interface, not concrete `DataStoreTipManager`; `MemoryTipManager` can now drive the managed UI for previews/tests.
 - [ ] Maven Central publishing (real GPG key, Sonatype account, upload). Dry-run + signing scaffolding already in place.
 
 ## v0.3 — UX and ergonomics

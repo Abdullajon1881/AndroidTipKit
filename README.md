@@ -185,9 +185,10 @@ scope.launch {
 - `TipState`: per-tip dismissed state, display count, and last shown timestamp
 - `TipCounters`: app-wide event counts and screen visit counts
 - `TipManager`: write-side lifecycle interface
-- `DataStoreTipManager`: Android DataStore implementation plus evaluation helpers
-- `MemoryTipManager`: in-memory `TipManager` in `nudgekit-core` for tests, previews, and sample/debug flows (no Android, nothing persisted)
-- Managed UI: `ManagedInlineTip` and `ManagedTipBox`
+- `ReactiveTipManager`: `TipManager` + reactive reads (`observeTipState`, `observeCounters`) + `shouldShow`; the contract the managed UI depends on
+- `DataStoreTipManager`: Android DataStore implementation of `ReactiveTipManager` plus evaluation helpers
+- `MemoryTipManager`: in-memory `ReactiveTipManager` in `nudgekit-core` for tests, previews, and sample/debug flows (no Android, nothing persisted) — can drive the managed components directly
+- Managed UI: `ManagedInlineTip` and `ManagedTipBox` (accept any `ReactiveTipManager`)
 - `TipAnalytics`: SDK-agnostic hook for observing tip lifecycle events (`onTipShown`, `onTipDismissed`, `onTipActionClicked`)
 
 ## Analytics

@@ -11,9 +11,9 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.preferencesDataStoreFile
 import dev.nudgekit.core.Tip
 import dev.nudgekit.core.TipCounters
+import dev.nudgekit.core.ReactiveTipManager
 import dev.nudgekit.core.TipDecision
 import dev.nudgekit.core.TipEvaluator
-import dev.nudgekit.core.TipManager
 import dev.nudgekit.core.TipState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -45,7 +45,7 @@ class DataStoreTipManager(
     private val dataStore: DataStore<Preferences>,
     private val evaluator: TipEvaluator = TipEvaluator(),
     private val clock: () -> Long = System::currentTimeMillis,
-) : TipManager {
+) : ReactiveTipManager {
 
     /**
      * Read stream that degrades gracefully on storage corruption. DataStore
@@ -133,7 +133,7 @@ class DataStoreTipManager(
      * Emits immediately with the current value, then re-emits whenever the
      * tip's state changes (dismissed, display count, or last-shown timestamp).
      */
-    fun observeTipState(tipId: String): Flow<TipState> {
+    override fun observeTipState(tipId: String): Flow<TipState> {
         require(tipId.isNotBlank()) { "Tip ID must not be blank" }
         return safeData
             .map { prefs -> readTipState(prefs, tipId) }
@@ -146,7 +146,7 @@ class DataStoreTipManager(
      * Emits immediately with the current value, then re-emits whenever
      * any counter changes.
      */
-    fun observeCounters(): Flow<TipCounters> {
+    override fun observeCounters(): Flow<TipCounters> {
         return safeData
             .map { prefs -> readCounters(prefs) }
             .distinctUntilChanged()
@@ -169,11 +169,14 @@ class DataStoreTipManager(
         return evaluator.evaluate(tip, state, counters, nowMillis)
     }
 
-    /** Convenience: returns `true` when [evaluate] yields [TipDecision.Show]. */
+    /** Eligibility at an explicit time. */
     suspend fun shouldShow(
         tip: Tip,
-        nowMillis: Long = clock(),
+        nowMillis: Long,
     ): Boolean = evaluate(tip, nowMillis) is TipDecision.Show
+
+    /** Eligibility using this manager's own clock (the [ReactiveTipManager] contract). */
+    override suspend fun shouldShow(tip: Tip): Boolean = shouldShow(tip, clock())
 
     // ---------------------------------------------------------------
     // Internal — read helpers

@@ -160,9 +160,23 @@ interface TipManager {
 
 The production, persistent implementation lives in [`nudgekit-datastore`](datastore.md). The interface itself stays Android-free.
 
+## `ReactiveTipManager`
+
+A `TipManager` that also exposes **reactive reads** and **eligibility**, so UI can observe state and decide visibility without depending on a specific persistence implementation. It lives in `nudgekit-core` and stays Android-free (it references only `Flow` + core value types).
+
+```kotlin
+interface ReactiveTipManager : TipManager {
+    fun observeTipState(tipId: String): Flow<TipState>
+    fun observeCounters(): Flow<TipCounters>
+    suspend fun shouldShow(tip: Tip): Boolean   // uses the manager's own clock
+}
+```
+
+This is the contract the managed Compose components (`ManagedInlineTip`, `ManagedTipBox`) depend on. **Both** `DataStoreTipManager` and `MemoryTipManager` implement it, so the same managed UI works with either — persistent in production, in-memory for previews and tests.
+
 ## `MemoryTipManager`
 
-An in-memory `TipManager` that lives in `nudgekit-core` — no Android, no DataStore, nothing persisted. State is held in plain maps for the lifetime of the instance.
+An in-memory `ReactiveTipManager` that lives in `nudgekit-core` — no Android, no DataStore, nothing persisted. State is held as an immutable snapshot in a `MutableStateFlow` for the lifetime of the instance, so it also provides the `observeTipState` / `observeCounters` flows and can drive the managed Compose components directly.
 
 ```kotlin
 val manager = MemoryTipManager()                     // optional: MemoryTipManager(clock = { fakeNow })
@@ -173,7 +187,7 @@ val state = manager.getTipState("save_address")      // synchronous read
 val show = manager.shouldShow(saveAddressTip)         // suspend (runs the evaluator)
 ```
 
-Use it for **unit tests, Compose previews, and sample/debug flows**. Its behaviour mirrors `DataStoreTipManager` (same increments, same validation, `reset` clears one tip but not counters, `resetAll` clears everything) and it takes the same injectable `clock`. The read helpers `getTipState` / `getCounters` are **plain (non-suspending)** functions here, since in-memory reads are synchronous; `evaluate` / `shouldShow` stay `suspend` because the evaluator runs `TipRule.Custom` predicates. It's thread-safe via a single internal monitor.
+Use it for **unit tests, Compose previews, and sample/debug flows** — including with `ManagedInlineTip` / `ManagedTipBox` (it satisfies `ReactiveTipManager`). Its behaviour mirrors `DataStoreTipManager` (same increments, same validation, `reset` clears one tip but not counters, `resetAll` clears everything) and it takes the same injectable `clock`. The read helpers `getTipState` / `getCounters` are **plain (non-suspending)** functions here, since in-memory reads are synchronous; `evaluate` / `shouldShow` stay `suspend` because the evaluator runs `TipRule.Custom` predicates. Writes update the backing `MutableStateFlow` atomically, so it's thread-safe without an explicit lock.
 
 ## `TipAnalytics`
 

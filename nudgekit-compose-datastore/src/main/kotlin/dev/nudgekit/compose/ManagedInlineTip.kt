@@ -10,30 +10,32 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.nudgekit.core.NoOpTipAnalytics
+import dev.nudgekit.core.ReactiveTipManager
 import dev.nudgekit.core.Tip
 import dev.nudgekit.core.TipAnalytics
 import dev.nudgekit.core.TipCounters
 import dev.nudgekit.core.TipState
-import dev.nudgekit.datastore.DataStoreTipManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
- * A state-aware inline tip that connects to [DataStoreTipManager] for
- * automatic visibility management, display tracking, and dismissal.
+ * A state-aware inline tip that connects to a [ReactiveTipManager] for
+ * automatic visibility management, display tracking, and dismissal. Works with
+ * any implementation — `DataStoreTipManager` (persistent) or `MemoryTipManager`
+ * (in-memory, for previews and tests).
  *
  * ### Visibility behaviour
  *
  * 1. On first composition (and whenever tip state or counters change while
  *    the tip is **not** showing), the manager's rules are evaluated.
- * 2. When all rules pass, the tip becomes visible and [markShown][DataStoreTipManager.markShown]
+ * 2. When all rules pass, the tip becomes visible and [markShown][ReactiveTipManager.markShown]
  *    is called **exactly once** per appearance.
  * 3. Once visible, the tip stays on-screen ("sticky") even if `markShown`
  *    mutates state that would otherwise make rules fail (e.g. MaxDisplayCount).
  *    This prevents the tip from flickering away mid-view.
  * 4. The tip hides when the user dismisses it or when it is dismissed
  *    externally (e.g. from another screen).
- * 5. After [resetAll][DataStoreTipManager.resetAll], rules are re-evaluated
+ * 5. After [resetAll][ReactiveTipManager.resetAll], rules are re-evaluated
  *    and the tip may reappear.
  *
  * ### Analytics
@@ -49,7 +51,7 @@ import kotlinx.coroutines.launch
  * Defaults to [NoOpTipAnalytics], so analytics is strictly opt-in.
  *
  * @param tip           The tip to display.
- * @param manager       The [DataStoreTipManager] that owns this tip's state.
+ * @param manager       The [ReactiveTipManager] that owns this tip's state.
  * @param modifier      Modifier applied to the outer card.
  * @param colors        Color scheme; defaults to [NudgeTipDefaults.colors].
  * @param onActionClick Called when the user taps the action button.
@@ -58,7 +60,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManagedInlineTip(
     tip: Tip,
-    manager: DataStoreTipManager,
+    manager: ReactiveTipManager,
     modifier: Modifier = Modifier,
     colors: NudgeTipColors = NudgeTipDefaults.colors(),
     onActionClick: (() -> Unit)? = null,

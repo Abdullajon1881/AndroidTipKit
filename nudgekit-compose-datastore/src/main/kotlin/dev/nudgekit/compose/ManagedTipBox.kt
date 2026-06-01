@@ -10,17 +10,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.nudgekit.core.NoOpTipAnalytics
+import dev.nudgekit.core.ReactiveTipManager
 import dev.nudgekit.core.Tip
 import dev.nudgekit.core.TipAnalytics
 import dev.nudgekit.core.TipCounters
 import dev.nudgekit.core.TipState
-import dev.nudgekit.datastore.DataStoreTipManager
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
- * A state-aware anchored tip that connects to [DataStoreTipManager] for
- * automatic visibility management, display tracking, and dismissal.
+ * A state-aware anchored tip that connects to a [ReactiveTipManager] for
+ * automatic visibility management, display tracking, and dismissal. Works with
+ * any implementation — `DataStoreTipManager` (persistent) or `MemoryTipManager`
+ * (in-memory, for previews and tests).
  *
  * This behaves identically to [ManagedInlineTip] but uses [TipBox] to
  * position the tip relative to the anchor [content].
@@ -38,7 +40,7 @@ import kotlinx.coroutines.launch
  * Defaults to [NoOpTipAnalytics], so analytics is strictly opt-in.
  *
  * @param tip           The tip to display.
- * @param manager       The [DataStoreTipManager] that owns this tip's state.
+ * @param manager       The [ReactiveTipManager] that owns this tip's state.
  * @param modifier      Modifier applied to the outer layout.
  * @param position      Where the tip appears relative to [content].
  * @param colors        Color scheme; defaults to [NudgeTipDefaults.colors].
@@ -49,7 +51,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun ManagedTipBox(
     tip: Tip,
-    manager: DataStoreTipManager,
+    manager: ReactiveTipManager,
     modifier: Modifier = Modifier,
     position: TipPosition = TipPosition.Bottom,
     colors: NudgeTipColors = NudgeTipDefaults.colors(),

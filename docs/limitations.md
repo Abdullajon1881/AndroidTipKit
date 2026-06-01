@@ -42,7 +42,7 @@ Test counts:
 
 NudgeKit is **alpha**: the entire public API may change before `1.0.0`, and there are no backward-compatibility guarantees between alpha versions yet.
 
-- **Stable in shape (low churn expected):** `Tip`, `TipState`, `TipCounters`, `TipDecision` / `TipHideReason`, `TipManager`, `MemoryTipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`). These are the core value types and contracts; changes here would be additive where possible.
+- **Stable in shape (low churn expected):** `Tip`, `TipState`, `TipCounters`, `TipDecision` / `TipHideReason`, `TipManager`, `ReactiveTipManager`, `MemoryTipManager`, `TipAnalytics`, and the pure-UI composables (`InlineTip`, `TipBox`, `TipPosition`, `NudgeTipColors`). These are the core value types and contracts; changes here would be additive where possible.
 - **Most likely to evolve:** `TipRule` (new rule types / a possible OR combinator), `Tip.priority` semantics (see below), `DataStoreTipManager`'s read/observe surface, and `NudgeTipDefaults` styling values.
 - Every change that affects users is recorded in [CHANGELOG.md](../CHANGELOG.md), with a migration note when it is breaking.
 
