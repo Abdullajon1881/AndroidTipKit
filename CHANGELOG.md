@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **React Native / Expo — Phase 3 (UI components + hooks)** in
+  `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
+  - `NudgeKitProvider` (React context for a `ReactiveTipManager` + optional
+    `TipAnalytics`) and `useNudgeKit()` (throws a clear error outside the provider).
+  - `useManagedTip(tip)` — headless controller built on `useSyncExternalStore` over
+    the manager's `subscribe`/`getSnapshot`; exposes `visible`, `markShown`,
+    `dismiss`, `actionPress(handler?)`, `decision`. Mirrors the Kotlin managed
+    components: sticky-show, **`markShown` + `onTipShown` once per appearance**
+    (never on re-render), dismiss persists + fires `onTipDismissed`, action fires
+    `onTipActionClicked` once, re-appears after reset.
+  - Pure components `InlineTip` / `TipBox` (caller-controlled visibility, styleable,
+    accessible — header title, 44dp labelled dismiss control) and managed
+    `ManagedInlineTip` / `ManagedTipBox` (render on eligibility; anchor always
+    renders for `ManagedTipBox`). `TipBox` uses simple in-flow `top|bottom|start|end`
+    positioning (no floating popover).
+  - `react` / `react-native` added as **peerDependencies**; React Native is **not**
+    bundled — components are pure JS/TS, **Expo Go-friendly, no native module, so no
+    Expo config plugin is required**. Animations / popover physics / debug overlay
+    remain deferred.
+  - Jest suite via `react-test-renderer`: **94 tests** passing (engine + managers +
+    storage + analytics + state-sequence parity + UI). `tsc` clean.
 - **React Native / Expo — Phase 2 (headless managers + persistence)** in
   `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
   - `TipManager` / `ReactiveTipManager` contracts and `MemoryTipManager` — a TS
