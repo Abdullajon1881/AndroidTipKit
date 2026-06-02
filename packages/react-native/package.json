@@ -1,5 +1,5 @@
 {
-  "name": "@abdullajon1991/nudgekit-react-native",
+  "name": "nudgekit",
   "version": "0.1.0",
   "description": "React Native / Expo bindings for NudgeKit — contextual tips, feature discovery, and onboarding nudges. Pure TypeScript engine + managers + UI, parity-tested with Kotlin NudgeKit 1.0.0.",
   "private": false,
@@ -27,9 +27,6 @@
   "types": "lib/index.d.ts",
   "sideEffects": false,
   "files": ["lib"],
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "node -e \"require('fs').rmSync('lib',{recursive:true,force:true})\"",

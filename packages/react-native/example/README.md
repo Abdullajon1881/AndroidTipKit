@@ -1,7 +1,7 @@
 # NudgeKit React Native — Expo example
 
 A minimal, single-screen Expo app that exercises every part of
-`@abdullajon1991/nudgekit-react-native`. Pure JS/TS, **Expo Go compatible**, no native modules.
+`nudgekit`. Pure JS/TS, **Expo Go compatible**, no native modules.
 
 ## Run
 

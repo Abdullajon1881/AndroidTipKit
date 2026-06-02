@@ -1,17 +1,17 @@
-# @abdullajon1991/nudgekit-react-native
+# nudgekit
 
 React Native / Expo bindings for [NudgeKit](https://github.com/Abdullajon1881/AndroidTipKit) — contextual tips, feature discovery, and onboarding nudges.
 
 > The React Native / Expo package for **NudgeKit** — the **TypeScript rule engine, headless managers + persistence, and the React Native UI layer** (provider, hook, pure + managed components), proven behaviourally identical to Kotlin NudgeKit 1.0.0 via shared rule vectors (`spec/rule-vectors/`). **Pure JS/TS, Expo Go-friendly, no native modules — so no Expo config plugin is required.** Components are minimal and styleable; animations / popover physics are deferred.
 >
-> Published from the personal npm scope **`@abdullajon1991`**, first release **`0.1.0`**. `react` and `react-native` are **peer dependencies** (provided by your app); this package does not bundle them.
+> Published as the unscoped npm package **`nudgekit`**, first release **`0.1.0`**. `react` and `react-native` are **peer dependencies** (provided by your app); this package does not bundle them.
 >
 > Part of the same **NudgeKit** product/brand as the native **Android (Kotlin/Compose)** library — which is a **separate Maven/Gradle distribution**, not this npm package.
 
 ## Install
 
 ```bash
-npm install @abdullajon1991/nudgekit-react-native
+npm install nudgekit
 # peer deps your app already has:
 npm install react react-native
 ```
@@ -45,7 +45,7 @@ npm install react react-native
 - `ManagedInlineTip`, `ManagedTipBox` — state-aware: render on eligibility, mark shown once per appearance, persist dismissals, fire analytics
 
 ```ts
-import { Rules, MemoryTipManager, type Tip } from '@abdullajon1991/nudgekit-react-native';
+import { Rules, MemoryTipManager, type Tip } from 'nudgekit';
 
 const promo: Tip = {
   id: 'promo', title: 'Sale', message: '20% off', priority: 5, groupId: 'home',
@@ -63,7 +63,7 @@ const winner = manager.selectEligible([promo /* … */]);
 `TipStorage` matches the `@react-native-async-storage/async-storage` API, so you can pass an `AsyncStorage` instance directly — but it's **optional**. `MemoryTipManager` needs no storage, and `MemoryStorage` works in Expo Go.
 
 ```ts
-import { createPersistentTipManager, MemoryStorage } from '@abdullajon1991/nudgekit-react-native';
+import { createPersistentTipManager, MemoryStorage } from 'nudgekit';
 
 // Tests / Expo Go:
 const manager = await createPersistentTipManager(new MemoryStorage());
@@ -78,7 +78,7 @@ const manager = await createPersistentTipManager(new MemoryStorage());
 ```tsx
 import {
   NudgeKitProvider, ManagedInlineTip, ManagedTipBox, MemoryTipManager,
-} from '@abdullajon1991/nudgekit-react-native';
+} from 'nudgekit';
 
 const manager = new MemoryTipManager(); // or await createPersistentTipManager(storage)
 
@@ -117,7 +117,7 @@ Parity is enforced against `../../spec/rule-vectors/` — the same fixtures the 
 - `files` ships **only `lib/`**; `prepare` builds automatically on install/publish;
   `prepublishOnly` re-runs clean + build + typecheck + tests before any publish.
 - `sideEffects: false` (tree-shaking-friendly), `publishConfig.access: public`.
-- Published under the personal scope **`@abdullajon1991`** (`private: false`).
+- Published as the unscoped public package **`nudgekit`** (`private: false`).
 
 ## Example app
 
@@ -128,13 +128,13 @@ the library straight from `../src` via Metro — see its README to run it.
 ## Releasing (maintainers)
 
 Publishing is **manual and gated** — there is intentionally **no auto-publish CI
-workflow**, and no npm token is stored in the repo. The package is published under
-the personal scope **`@abdullajon1991`**:
+workflow**, and no npm token is stored in the repo. The package is published as the
+unscoped public package **`nudgekit`**:
 
 1. `npm login` locally (account `abdullajon1991`); confirm with `npm whoami`.
 2. Dry run: `npm publish --dry-run` (inspect tarball = `README` + `lib/` only).
-3. Publish: `npm publish --access public` (runs `prepublishOnly`: clean → build → typecheck → test).
-4. Tag the release: `git tag -a rn-v0.1.0` and push it.
+3. Publish: `npm publish` (runs `prepublishOnly`: clean → build → typecheck → test).
+4. Tag the release and push it.
 5. *(Optional, later)* add provenance via a GitHub Actions release workflow using
    OIDC + `npm publish --provenance` — only after the first manual publish.
 

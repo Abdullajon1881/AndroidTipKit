@@ -14,7 +14,7 @@ import {
   type ReactiveTipManager,
   type Tip,
   type TipAnalytics,
-} from '@abdullajon1991/nudgekit-react-native';
+} from 'nudgekit';
 
 // ── Tips demonstrating every rule kind ──────────────────────────────────────
 const WELCOME: Tip = {
