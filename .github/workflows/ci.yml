@@ -71,3 +71,35 @@ jobs:
             **/build/reports/lint-results-*.html
           if-no-files-found: ignore
           retention-days: 7
+
+  react-native:
+    name: React Native package (Node 20)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/react-native
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: packages/react-native/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Unit tests (engine + managers + UI parity)
+        run: npm test
+
+      - name: Build (tsc → lib)
+        run: npm run build
+
+      - name: Verify package contents (no junk)
+        run: npm pack --dry-run

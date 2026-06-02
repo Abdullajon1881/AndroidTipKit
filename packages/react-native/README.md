@@ -2,7 +2,7 @@
 
 React Native / Expo bindings for [NudgeKit](https://github.com/Abdullajon1881/AndroidTipKit) — contextual tips, feature discovery, and onboarding nudges.
 
-> **Status: Phase 3 (UI layer).** This package now contains the **TypeScript rule engine, headless managers + persistence, and the React Native UI layer** (provider, hook, pure + managed components), proven behaviourally identical to Kotlin NudgeKit 1.0.0 via shared rule vectors (`spec/rule-vectors/`). **Pure JS/TS, Expo Go-friendly, no native modules — so no Expo config plugin is needed.** Components are minimal and styleable; animations / popover physics are deferred. **Not yet published to npm** (`private: true`).
+> **Status: Phase 4 (runnable & consumable).** This package contains the **TypeScript rule engine, headless managers + persistence, and the React Native UI layer** (provider, hook, pure + managed components), proven behaviourally identical to Kotlin NudgeKit 1.0.0 via shared rule vectors (`spec/rule-vectors/`). It now also has a **`tsc` build** (`lib/`, JS + types) so it packs like a real npm package, and a runnable **Expo example app** (`example/`). **Pure JS/TS, Expo Go-friendly, no native modules — so no Expo config plugin is needed.** Components are minimal and styleable; animations / popover physics are deferred. **Still `private` — not published to npm.**
 >
 > `react` and `react-native` are **peer dependencies** (provided by your app); this package does not bundle them.
 
@@ -87,9 +87,24 @@ Need full control? Use the pure `InlineTip` / `TipBox` and drive visibility your
 ## Develop
 
 ```bash
-npm install     # uses .npmrc (legacy-peer-deps); RN is a peer dep, not installed here
-npm test        # Jest: engine + manager + UI (react-test-renderer)
+npm install        # uses .npmrc (legacy-peer-deps); RN is a peer dep, not installed here
 npm run typecheck
+npm test           # Jest: engine + manager + UI (react-test-renderer)
+npm run build      # tsc → lib/ (CJS + .d.ts); what npm publish would ship
+npm pack --dry-run # inspect the would-be tarball (lib/ only, no junk)
 ```
 
 Parity is enforced against `../../spec/rule-vectors/` — the same fixtures the Kotlin `ParityVectorTest` (engine) and `ParityStateVectorTest` (managers) run.
+
+## Build & packaging
+
+- `npm run build` runs `tsc -p tsconfig.build.json`, emitting **CommonJS + type
+  declarations** to `lib/` (`main` → `lib/index.js`, `types` → `lib/index.d.ts`).
+- `files` ships **only `lib/`**; `prepare` builds automatically on install/publish.
+- The package is still **`private`** — `npm publish` is deferred to a later phase.
+
+## Example app
+
+A runnable Expo app lives in [`example/`](example/) and exercises every feature
+(provider, managed components, the selector, analytics, track/reset). It consumes
+the library straight from `../src` via Metro — see its README to run it.

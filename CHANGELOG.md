@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **React Native / Expo — Phase 4 (runnable & consumable)** in
+  `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
+  - **Build/packaging:** a `tsc` build (`tsconfig.build.json`) emits CommonJS +
+    type declarations to `lib/`; `package.json` now points `main` → `lib/index.js`,
+    `types` → `lib/index.d.ts`, `files` → `["lib"]`, with `build` / `clean` /
+    `prepare` scripts. `npm pack --dry-run` ships **only `lib/`** (README + JS +
+    d.ts + maps) — no tests/mocks/shim/node_modules. The dev-only RN type shim
+    and the jest stub are excluded from the tarball.
+  - **Expo example app** (`packages/react-native/example/`, Expo SDK 52, Expo Go
+    compatible, no native module): a single clean screen demonstrating
+    `NudgeKitProvider`, a `createPersistentTipManager(AsyncStorage)` manager,
+    `ManagedInlineTip` / `ManagedTipBox`, the pure `InlineTip` driven by
+    `selectEligible` (group/priority), `TipAnalytics` event log, `trackEvent` /
+    `trackScreen`, `reset` / `resetAll`, `ExpiresAfter`, and `AnyOf`/`AllOf`.
+    It consumes the library from source via Metro (hot reload); AsyncStorage is a
+    dependency of the **example only** — the library stays dependency-light.
+  - **CI:** a Node 20 `react-native` job (install → typecheck → test → build →
+    `npm pack --dry-run`) added alongside the existing Gradle job; no Expo
+    device/emulator required.
+  - No Expo **config plugin** is needed — the package is pure JS/TS with no native
+    code. `npm publish` remains deferred.
 - **React Native / Expo — Phase 3 (UI components + hooks)** in
   `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
   - `NudgeKitProvider` (React context for a `ReactiveTipManager` + optional

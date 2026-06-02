@@ -1,0 +1,11 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@nudgekit/react-native": ["../lib/index.d.ts"]
+    }
+  },
+  "include": ["App.tsx", "**/*.ts", "**/*.tsx"]
+}

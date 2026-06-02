@@ -364,6 +364,16 @@ Near-term priorities (post-1.0):
 - automatic group coordination in the managed components (`ManagedTipGroup`)
 - prepare Maven Central publishing (real GPG key + Sonatype account)
 
+## React Native / Expo (in progress)
+
+A first-party React Native / Expo package, **`@nudgekit/react-native`**, lives in
+[`packages/react-native/`](packages/react-native/). It ports the rule engine,
+managers, and UI to pure TypeScript (behaviour pinned to this Android library via
+shared rule vectors in `spec/rule-vectors/`) and ships a runnable
+[Expo example app](packages/react-native/example/). It is **not yet published to
+npm** (still `private`); no Expo config plugin is needed because it is pure JS/TS
+with no native modules. See its [README](packages/react-native/README.md).
+
 ## Documentation
 
 - [Getting started](docs/getting-started.md)
