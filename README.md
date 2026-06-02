@@ -366,14 +366,15 @@ Near-term priorities (post-1.0):
 
 ## React Native / Expo (in progress)
 
-A first-party React Native / Expo package, **`@nudgekit/react-native`**, lives in
+A first-party React Native / Expo package, **`@abdullajon1991/nudgekit-react-native`**, lives in
 [`packages/react-native/`](packages/react-native/). It ports the rule engine,
 managers, and UI to pure TypeScript (behaviour pinned to this Android library via
 shared rule vectors in `spec/rule-vectors/`) and ships a runnable
-[Expo example app](packages/react-native/example/). It is **publish-ready but not yet published to
-npm** (still `private` until the `@nudgekit` scope is owned); no Expo config
-plugin is needed because it is pure JS/TS with no native modules. See its
-[README](packages/react-native/README.md).
+[Expo example app](packages/react-native/example/). Install it with
+`npm install @abdullajon1991/nudgekit-react-native` (first release `0.1.0`, personal
+npm scope). No Expo config plugin is needed because it is pure JS/TS with no native
+modules; the native Android library remains a separate Maven/Gradle distribution.
+See its [README](packages/react-native/README.md).
 
 ## Documentation
 

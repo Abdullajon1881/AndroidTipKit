@@ -14,7 +14,7 @@ config.watchFolders = [packageSrc];
 
 // Resolve the package name to source, and shared peers to this app's copies.
 config.resolver.extraNodeModules = {
-  '@nudgekit/react-native': packageSrc,
+  '@abdullajon1991/nudgekit-react-native': packageSrc,
   react: path.resolve(projectRoot, 'node_modules', 'react'),
   'react-native': path.resolve(projectRoot, 'node_modules', 'react-native'),
 };

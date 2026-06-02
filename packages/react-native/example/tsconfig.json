@@ -4,7 +4,7 @@
     "strict": true,
     "baseUrl": ".",
     "paths": {
-      "@nudgekit/react-native": ["../lib/index.d.ts"]
+      "@abdullajon1991/nudgekit-react-native": ["../lib/index.d.ts"]
     }
   },
   "include": ["App.tsx", "**/*.ts", "**/*.tsx"]

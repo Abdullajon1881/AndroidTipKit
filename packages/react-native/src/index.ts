@@ -1,5 +1,5 @@
 /**
- * @nudgekit/react-native — public surface.
+ * @abdullajon1991/nudgekit-react-native — public surface.
  *
  * Phases 1–3 (parity with Kotlin NudgeKit 1.0.0): the TypeScript rule engine,
  * headless managers + persistence, and the React Native UI layer (provider,

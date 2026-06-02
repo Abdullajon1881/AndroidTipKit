@@ -1,8 +1,8 @@
 {
-  "name": "@nudgekit/react-native",
+  "name": "@abdullajon1991/nudgekit-react-native",
   "version": "0.1.0",
   "description": "React Native / Expo bindings for NudgeKit — contextual tips, feature discovery, and onboarding nudges. Pure TypeScript engine + managers + UI, parity-tested with Kotlin NudgeKit 1.0.0.",
-  "private": true,
+  "private": false,
   "license": "Apache-2.0",
   "author": "Abdullajon1881",
   "homepage": "https://github.com/Abdullajon1881/AndroidTipKit/tree/main/packages/react-native#readme",
