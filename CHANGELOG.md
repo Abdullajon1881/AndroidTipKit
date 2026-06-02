@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **React Native / Expo — Phase 5 (npm publish-ready, not published)** in
+  `packages/react-native` (`@nudgekit/react-native`):
+  - Publish metadata: `version` `0.1.0`, `homepage`, `bugs`, expanded `keywords`,
+    `sideEffects: false`, `publishConfig.access: public`, and a `prepublishOnly`
+    script (clean → build → typecheck → test). `npm pack --dry-run` stays clean
+    (ships only `lib/`).
+  - Docs: a "future / not yet available" `npm install` note, an explicit
+    maintainer **Releasing** runbook (manual, gated; no auto-publish workflow,
+    no token in the repo), and clarification that AsyncStorage is optional /
+    example-only and that the native Android library is the same brand shipped
+    separately.
+  - **Still `private` — not published.** The `@nudgekit` npm scope ownership is
+    unverified (no npm auth in this environment), so `private` is intentionally
+    left `true`; flipping it + `npm publish` is a manual maintainer step.
 - **React Native / Expo — Phase 4 (runnable & consumable)** in
   `packages/react-native` (`@nudgekit/react-native`, still `private`, not published):
   - **Build/packaging:** a `tsc` build (`tsconfig.build.json`) emits CommonJS +

@@ -1,25 +1,42 @@
 {
   "name": "@nudgekit/react-native",
-  "version": "0.1.0-dev.0",
-  "description": "React Native / Expo bindings for NudgeKit — contextual tips, feature discovery, and onboarding nudges. Headless engine + managers + minimal UI (parity with Kotlin NudgeKit 1.0.0).",
+  "version": "0.1.0",
+  "description": "React Native / Expo bindings for NudgeKit — contextual tips, feature discovery, and onboarding nudges. Pure TypeScript engine + managers + UI, parity-tested with Kotlin NudgeKit 1.0.0.",
   "private": true,
   "license": "Apache-2.0",
   "author": "Abdullajon1881",
+  "homepage": "https://github.com/Abdullajon1881/AndroidTipKit/tree/main/packages/react-native#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/Abdullajon1881/AndroidTipKit.git",
     "directory": "packages/react-native"
   },
-  "keywords": ["nudgekit", "tips", "onboarding", "react-native", "expo"],
+  "bugs": {
+    "url": "https://github.com/Abdullajon1881/AndroidTipKit/issues"
+  },
+  "keywords": [
+    "nudgekit",
+    "tips",
+    "tooltip",
+    "onboarding",
+    "feature-discovery",
+    "react-native",
+    "expo"
+  ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "sideEffects": false,
   "files": ["lib"],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "clean": "node -e \"require('fs').rmSync('lib',{recursive:true,force:true})\"",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build && npm run typecheck && npm test"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

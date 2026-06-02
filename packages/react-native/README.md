@@ -2,9 +2,25 @@
 
 React Native / Expo bindings for [NudgeKit](https://github.com/Abdullajon1881/AndroidTipKit) — contextual tips, feature discovery, and onboarding nudges.
 
-> **Status: Phase 4 (runnable & consumable).** This package contains the **TypeScript rule engine, headless managers + persistence, and the React Native UI layer** (provider, hook, pure + managed components), proven behaviourally identical to Kotlin NudgeKit 1.0.0 via shared rule vectors (`spec/rule-vectors/`). It now also has a **`tsc` build** (`lib/`, JS + types) so it packs like a real npm package, and a runnable **Expo example app** (`example/`). **Pure JS/TS, Expo Go-friendly, no native modules — so no Expo config plugin is needed.** Components are minimal and styleable; animations / popover physics are deferred. **Still `private` — not published to npm.**
+> **Status: Phase 5 (publish-ready, not published).** This package contains the **TypeScript rule engine, headless managers + persistence, and the React Native UI layer** (provider, hook, pure + managed components), proven behaviourally identical to Kotlin NudgeKit 1.0.0 via shared rule vectors (`spec/rule-vectors/`). It has a **`tsc` build** (`lib/`, JS + types), a runnable **Expo example app** (`example/`), and complete publish metadata. **Pure JS/TS, Expo Go-friendly, no native modules — so no Expo config plugin is needed.** Components are minimal and styleable; animations / popover physics are deferred.
 >
-> `react` and `react-native` are **peer dependencies** (provided by your app); this package does not bundle them.
+> **⚠️ Not published to npm yet — the package is still `private`.** The `@nudgekit` npm scope ownership is not yet verified; publishing is a manual, maintainer-gated step (see [Releasing](#releasing-maintainers)).
+>
+> `react` and `react-native` are **peer dependencies** (provided by your app); this package does not bundle them. It is part of the same **NudgeKit** product/brand as the native Android (Kotlin/Compose) library, which ships separately from this repo.
+
+## Install
+
+> **Future / not yet available.** Once published, install with:
+>
+> ```bash
+> npm install @nudgekit/react-native
+> # peers (your app already has these): react, react-native
+> ```
+>
+> Until then, consume it locally (this repo's [example app](example/) shows the
+> source/Metro setup). `@react-native-async-storage/async-storage` is **optional**
+> and only needed if you use `createPersistentTipManager` — it is a dependency of
+> the example, **not** of this package.
 
 ## What's here
 
@@ -100,11 +116,32 @@ Parity is enforced against `../../spec/rule-vectors/` — the same fixtures the 
 
 - `npm run build` runs `tsc -p tsconfig.build.json`, emitting **CommonJS + type
   declarations** to `lib/` (`main` → `lib/index.js`, `types` → `lib/index.d.ts`).
-- `files` ships **only `lib/`**; `prepare` builds automatically on install/publish.
-- The package is still **`private`** — `npm publish` is deferred to a later phase.
+- `files` ships **only `lib/`**; `prepare` builds automatically on install/publish;
+  `prepublishOnly` re-runs clean + build + typecheck + tests before any publish.
+- `sideEffects: false` (tree-shaking-friendly), `publishConfig.access: public`.
+- The package is **`private`** until the `@nudgekit` npm scope is owned/verified.
 
 ## Example app
 
 A runnable Expo app lives in [`example/`](example/) and exercises every feature
 (provider, managed components, the selector, analytics, track/reset). It consumes
 the library straight from `../src` via Metro — see its README to run it.
+
+## Releasing (maintainers)
+
+Publishing is **manual and gated** — there is intentionally **no auto-publish CI
+workflow**, and no npm token is stored in the repo. When the `@nudgekit` scope is
+owned and you're ready:
+
+1. Verify/create the npm org so you own the **`@nudgekit`** scope
+   (npmjs.com → *Add organization*), then `npm login` locally.
+2. In `packages/react-native/package.json`, set **`"private": false`**
+   (`publishConfig.access` is already `public`).
+3. Dry run: `npm publish --dry-run` (inspect tarball = `lib/` only).
+4. Publish: `npm publish` (runs `prepublishOnly`: clean → build → typecheck → test).
+5. Tag the release (e.g. `rn-v0.1.0`) and update the install docs to drop the
+   "future / not yet available" note.
+6. *(Optional, later)* add provenance via a GitHub Actions release workflow using
+   OIDC + `npm publish --provenance` — only after the first manual publish.
+
+Do **not** paste npm tokens anywhere in the repo or chat; `npm login` handles auth locally.
