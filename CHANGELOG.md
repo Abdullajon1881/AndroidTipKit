@@ -8,23 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- **React Native / Expo — first npm release prep** (`nudgekit`):
-  - Published as the **unscoped public package `nudgekit`**, `version` `0.1.0`,
-    **`private: false`** (no `publishConfig` needed — unscoped packages are public
-    by default). Example app imports / Metro alias / tsconfig paths use `nudgekit`.
-    (Supersedes the earlier scoped name `@abdullajon1991/nudgekit-react-native`.)
-  - Publish metadata: `homepage`, `bugs`, `keywords`, `sideEffects: false`, and a
-    `prepublishOnly` script (clean → build → typecheck → test). `npm pack --dry-run`
-    ships only `README` + `lib/`.
-  - Docs (package + root README, example) use
-    `npm install nudgekit`, and a maintainer
-    **Releasing** runbook (manual, gated; no auto-publish workflow, no token in repo).
-  - **Built, verified, and tagged `rn-v0.1.0` — the actual `npm publish` is still
-    pending explicit maintainer approval.** Pure JS/TS, no native modules, no Expo
-    config plugin; the native Android library remains a separate Maven/Gradle
-    distribution of the same product.
+- **React Native / Expo — published to npm as `nudgekit@0.1.0`** 🎉
+  - First public release of the RN/Expo package, the **unscoped public package
+    [`nudgekit`](https://www.npmjs.com/package/nudgekit)** (`private: false`; no
+    `publishConfig` needed — unscoped packages are public by default).
+    Install: `npm install nudgekit`. Tagged `rn-v0.1.0-nudgekit`.
+  - Supersedes the earlier scoped name `@abdullajon1991/nudgekit-react-native`,
+    which was prepared but **never actually published** (publish attempts were
+    blocked by 2FA), so there is nothing to deprecate or unpublish.
+  - Ships only `README` + `lib/` (CJS + types); `sideEffects: false`; metadata
+    (`homepage`, `bugs`, `keywords`); `prepublishOnly` runs clean → build →
+    typecheck → test. Example app imports / Metro alias / tsconfig paths use `nudgekit`.
+  - Pure JS/TS, no native modules, no Expo config plugin; the native Android
+    library remains a separate Maven/Gradle distribution of the same product.
 - **React Native / Expo — Phase 4 (runnable & consumable)** in
-  `packages/react-native` (`nudgekit`, still `private`, not published):
+  `packages/react-native` (now published as `nudgekit`):
   - **Build/packaging:** a `tsc` build (`tsconfig.build.json`) emits CommonJS +
     type declarations to `lib/`; `package.json` now points `main` → `lib/index.js`,
     `types` → `lib/index.d.ts`, `files` → `["lib"]`, with `build` / `clean` /
@@ -45,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - No Expo **config plugin** is needed — the package is pure JS/TS with no native
     code. `npm publish` remains deferred.
 - **React Native / Expo — Phase 3 (UI components + hooks)** in
-  `packages/react-native` (`nudgekit`, still `private`, not published):
+  `packages/react-native` (now published as `nudgekit`):
   - `NudgeKitProvider` (React context for a `ReactiveTipManager` + optional
     `TipAnalytics`) and `useNudgeKit()` (throws a clear error outside the provider).
   - `useManagedTip(tip)` — headless controller built on `useSyncExternalStore` over
@@ -66,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Jest suite via `react-test-renderer`: **94 tests** passing (engine + managers +
     storage + analytics + state-sequence parity + UI). `tsc` clean.
 - **React Native / Expo — Phase 2 (headless managers + persistence)** in
-  `packages/react-native` (`nudgekit`, still `private`, not published):
+  `packages/react-native` (now published as `nudgekit`):
   - `TipManager` / `ReactiveTipManager` contracts and `MemoryTipManager` — a TS
     port of the Kotlin managers (`trackEvent`/`trackScreen`/`dismiss`/`markShown`/
     `reset`/`resetAll`, synchronous `getTipState`/`getCounters`, `evaluate`/
